@@ -3,9 +3,19 @@ from typing import Optional
 
 
 def setup_logging(level: int = logging.INFO) -> None:
-    """
-    Configure root logging once for the application.
-    Call this from your main entry point, not inside libraries.
+    """Configure the application's logging behavior.
+
+    This function attempts to use `rich`'s `RichHandler` for enhanced,
+    colorful, and trace-friendly logging. If `rich` is not installed,
+    it falls back to Python's standard logging configuration.
+
+    Args:
+        level (int, optional): Logging level to use. Defaults to
+            ``logging.INFO``.
+
+    Raises:
+        None explicitly. If `rich` is unavailable, the function
+        silently falls back to standard logging.
     """
     handler = None
 
@@ -35,7 +45,16 @@ def setup_logging(level: int = logging.INFO) -> None:
 
 
 def get_logger(name: Optional[str] = None) -> logging.Logger:
-    """
-    Get a logger. Use get_logger(__name__) in your modules.
+    """Return a logger instance.
+
+    If no name is provided, the module's ``__name__`` is used.
+
+    Args:
+        name (str, optional): Name of the logger. If ``None``, defaults
+            to the current module name.
+
+    Returns:
+        logging.Logger: A logger instance configured through
+        ``setup_logging``.
     """
     return logging.getLogger(name or __name__)

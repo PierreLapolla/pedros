@@ -1,6 +1,6 @@
 # Decorpack
 
-[![PyPI](https://img.shields.io/pypi/v/decorpack)](https://pypi.org/project/decorpack/)  
+[![PyPI](https://img.shields.io/pypi/v/pedros)](https://pypi.org/project/pedros/)  
 
 A small collection of reusable Python decorators and utilities.
 
@@ -27,4 +27,4 @@ logger.info("This is an info message")
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT [License](LICENSE).
