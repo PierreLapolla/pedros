@@ -1,8 +1,14 @@
 name: CI & Publish
 
 on:
+  # Run tests on every PR to master
+  pull_request:
+    branches: [ master ]
+
+  # Run full pipeline (incl. publish) when something is pushed to master
+  # – this includes merges of PRs into master
   push:
-    tags: ["v*.*.*"]
+    branches: [ master ]
 
 jobs:
   test:
@@ -19,19 +25,52 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install uv && uv sync
+
       - name: Run tests
         run: uv run pytest
 
   build:
     needs: test
     runs-on: ubuntu-latest
+
+    # Expose the version (read from pyproject.toml) to other jobs
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version-file: '.python-version'
+
+      # Read version from pyproject.toml so you only maintain it there
+      - name: Get version from pyproject.toml
+        id: get_version
+        run: |
+          python - << 'PY'
+          import sys
+          import pathlib
+
+          # tomllib is in the standard library from Python 3.11+
+          try:
+              import tomllib
+          except ModuleNotFoundError:
+              import tomli as tomllib  # fallback if runner uses <3.11
+
+          pyproject = pathlib.Path("pyproject.toml")
+          data = tomllib.loads(pyproject.read_text(encoding="utf-8"))
+          version = data["project"]["version"]
+
+          print(f"Detected version: {version}")
+
+          with open("${GITHUB_OUTPUT}", "a") as f:
+              f.write(f"version={version}\n")
+          PY
+
       - name: Build distributions
         run: |
+          python -m pip install --upgrade pip
           pip install build
           python -m build
 
@@ -44,9 +83,15 @@ jobs:
   publish:
     needs: build
     runs-on: ubuntu-latest
+
+    # Only publish on *push* to master (i.e. after a PR is merged)
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+
     environment:
       name: pypi
-      url: https://pypi.org/project/pedros/${{ github.ref_name }}
+      # Use the version detected from pyproject.toml in the environment URL
+      url: https://pypi.org/project/pedros/${{ needs.build.outputs.version }}
+
     permissions:
       contents: read
       id-token: write
