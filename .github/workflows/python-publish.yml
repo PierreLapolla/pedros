@@ -18,7 +18,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install uv && uv sync    # or pip install -r requirements-dev.txt
+          pip install uv && uv sync
       - name: Run tests
         run: uv run pytest
 
@@ -46,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/project/decorpack/${{ github.ref_name }}
+      url: https://pypi.org/project/pedros/${{ github.ref_name }}
     permissions:
       contents: read
       id-token: write
