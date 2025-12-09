@@ -7,6 +7,7 @@ A small collection of reusable Python decorators and utilities.
 ## Features
  
 - `logger`: pre-configured Python logger ready to use
+- `timed`: decorator to measure execution time
 
 ## Installation
 
@@ -16,6 +17,9 @@ A small collection of reusable Python decorators and utilities.
 
 ## Quickstart
 
+You can check the [init](src/pedros/__init__.py) and [main](src/pedros/__main__.py) files for examples.
+
+### Logger
 ```python
 from pedros.logger import setup_logging, get_logger
 
@@ -23,6 +27,15 @@ setup_logging()
 logger = get_logger(__name__)
 
 logger.info("This is an info message")
+```
+
+### Timed
+```python
+from pedros.timed import timed
+
+@timed
+def func():
+    ...
 ```
 
 ## License

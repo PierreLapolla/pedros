@@ -9,6 +9,7 @@ def setup_logging(level: int = logging.INFO) -> None:
     This function attempts to use Rich's ``RichHandler`` for enhanced,
     colorful, and trace-friendly logging. If Rich is not installed,
     it silently falls back to Python's standard logging configuration.
+    See more about Rich (https://pypi.org/project/rich/).
 
     :param level: Logging level to use. Defaults to ``logging.INFO``.
     :type level: int
