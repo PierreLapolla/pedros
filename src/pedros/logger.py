@@ -3,19 +3,17 @@ from typing import Optional
 
 
 def setup_logging(level: int = logging.INFO) -> None:
-    """Configure the application's logging behavior.
+    """
+    Configure the application's logging behavior.
 
-    This function attempts to use `rich`'s `RichHandler` for enhanced,
-    colorful, and trace-friendly logging. If `rich` is not installed,
-    it falls back to Python's standard logging configuration.
+    This function attempts to use Rich's ``RichHandler`` for enhanced,
+    colorful, and trace-friendly logging. If Rich is not installed,
+    it silently falls back to Python's standard logging configuration.
+    See more about Rich (https://pypi.org/project/rich/).
 
-    Args:
-        level (int, optional): Logging level to use. Defaults to
-            ``logging.INFO``.
-
-    Raises:
-        None explicitly. If `rich` is unavailable, the function
-        silently falls back to standard logging.
+    :param level: Logging level to use. Defaults to ``logging.INFO``.
+    :type level: int
+    :return: None
     """
     handler = None
 
@@ -45,16 +43,13 @@ def setup_logging(level: int = logging.INFO) -> None:
 
 
 def get_logger(name: Optional[str] = None) -> logging.Logger:
-    """Return a logger instance.
+    """
+    Return a logger instance.
 
     If no name is provided, the module's ``__name__`` is used.
 
-    Args:
-        name (str, optional): Name of the logger. If ``None``, defaults
-            to the current module name.
-
-    Returns:
-        logging.Logger: A logger instance configured through
-        ``setup_logging``.
+    :param name: Name of the logger. If ``None``, defaults to the current module.
+    :type name: str or None
+    :return: A configured logger instance.
     """
     return logging.getLogger(name or __name__)
