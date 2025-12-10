@@ -21,10 +21,19 @@ You can check the [init](src/pedros/__init__.py) and [main](src/pedros/__main__.
 
 ### Logger
 ```python
+from pedros.logger import get_logger
+
+logger = get_logger()
+
+logger.info("This is an info message")
+```
+You can also override the default logger level and name:
+```python
+import logging
 from pedros.logger import setup_logging, get_logger
 
-setup_logging()
-logger = get_logger(__name__)
+setup_logging(logging.ERROR)
+logger = get_logger("my_logger")
 
 logger.info("This is an info message")
 ```

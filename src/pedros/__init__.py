@@ -1,4 +1,3 @@
-import logging
 from pedros.logger import setup_logging
 
-setup_logging(logging.INFO)
+setup_logging()
