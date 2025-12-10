@@ -35,6 +35,7 @@ def setup_logging(level: int = logging.INFO) -> None:
         format=fmt,
         datefmt=datefmt,
         handlers=handlers,
+        force=True,
     )
 
     logger = logging.getLogger(__name__)
