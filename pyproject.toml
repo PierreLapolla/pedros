@@ -7,7 +7,7 @@ license = {file = "LICENSE"}
 authors = [
     {name = "Pierre LAPOLLA"}
 ]
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 dependencies = [
     "wrapt>=2.0.1",
 ]
