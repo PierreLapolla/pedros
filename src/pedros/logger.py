@@ -1,5 +1,6 @@
 import logging
 from typing import Optional
+from pedros.dependency_check import check_dependency
 
 
 def setup_logging(level: int = logging.INFO) -> None:
@@ -15,32 +16,29 @@ def setup_logging(level: int = logging.INFO) -> None:
     :type level: int
     :return: None
     """
-    handler = None
+    format = None
+    datefmt = None
+    handlers = []
 
-    try:
+    if check_dependency("rich"):
         from rich.logging import RichHandler
 
+        format = "%(message)s"
         handler = RichHandler(rich_tracebacks=True)
-        handlers = [handler]
-        fmt = "%(message)s"
-        datefmt = None
-
-    except (ImportError, ModuleNotFoundError):
-        handlers = None
-        fmt = "%(asctime)s | %(levelname)-8s | %(message)s"
+        handlers.append(handler)
+    else:
+        format = "%(asctime)s | %(levelname)-8s | %(message)s"
         datefmt = "%Y-%m-%d %H:%M:%S"
+        handler = logging.StreamHandler()
+        handlers.append(handler)
 
     logging.basicConfig(
         level=level,
-        format=fmt,
+        format=format,
         datefmt=datefmt,
         handlers=handlers,
         force=True,
     )
-
-    logger = logging.getLogger(__name__)
-    if handler is None:
-        logger.debug("Rich library not found, using standard logging.")
 
 
 def get_logger(name: Optional[str] = None) -> logging.Logger:
