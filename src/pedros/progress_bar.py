@@ -39,6 +39,30 @@ def progbar(
     backend: str = "auto",
     **kwargs: Any,
 ) -> Union[Iterable[T], Tqdm[T]]:
+    """
+    Provides a utility function for wrapping an iterable with a progress bar, supporting
+    multiple backends. The choice of backend can be explicitly specified or automatically
+    determined based on library availability. The supported backends include "rich",
+    "tqdm", "none", and "auto".
+
+    The function is designed to warn the user if an invalid backend is provided or if
+    the required dependencies for a specific backend are missing. In such cases, a
+    fallback mechanism ensures the function operates without disruption.
+
+    Supported functionality includes customizable progress bar descriptions and other
+    backend-specific configurations through keyword arguments.
+
+    :param iterable: The input iterable to be wrapped with a progress bar.
+    :param args: Additional positional arguments to customize the behavior of the
+        selected backend.
+    :param backend: Specifies the progress bar backend to use. Options are "auto",
+        "rich", "tqdm", or "none". Defaults to "auto".
+    :param kwargs: Additional keyword arguments that are passed directly to the
+        specified backend for further customization.
+    :return: If a progress bar backend is applied, an iterable or an instance based on
+        the backend-specific implementation is returned. Otherwise, the original iterable
+        is returned.
+    """
     logger = get_logger()
 
     allowed = {"auto", "rich", "tqdm", "none"}
@@ -68,12 +92,14 @@ def progbar(
 
     if backend_lit == "rich":
         if not check_dependency("rich"):
-            raise ImportError("backend='rich' requested but 'rich' is not installed.")
+            logger.warning("backend='rich' requested but 'rich' is not installed. Falling back to 'none'.")
+            return iterable
         return _rich(iterable)
 
     if backend_lit == "tqdm":
         if not check_dependency("tqdm"):
-            raise ImportError("backend='tqdm' requested but 'tqdm' is not installed.")
+            logger.warning("backend='tqdm' requested but 'tqdm' is not installed. Falling back to 'none'.")
+            return iterable
         return _tqdm(iterable)
 
     # auto
