@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import logging
 from typing import Optional
+
 from pedros.dependency_check import check_dependency
 
 

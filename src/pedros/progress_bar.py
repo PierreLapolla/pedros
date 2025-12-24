@@ -1,44 +1,86 @@
+from __future__ import annotations
+
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Iterable,
+    Literal,
+    TypeVar,
+    Union,
+    overload,
+    cast,
+)
+
 from pedros.dependency_check import check_dependency
 from pedros.logger import get_logger
 
+T = TypeVar("T")
+Backend = Literal["auto", "rich", "tqdm", "none"]
 
-def progbar(iterable, *args, **kwargs):
-    """
-    Provides a utility function to display a progress bar for iterables. Based on the
-    availability of third-party libraries, such as 'rich' or 'tqdm', it dynamically
-    selects the appropriate library to show the progress bar. If neither library is
-    installed, it logs a warning and returns the original iterable without any
-    progress tracking. If both libraries are installed, it uses 'rich' by default.
+if TYPE_CHECKING and check_dependency("tqdm"):
+    from tqdm.std import tqdm as Tqdm
+else:
+    Tqdm = Any
 
-    :param iterable: The iterable for which progress needs to be tracked.
-    :type iterable: Iterable
-    :param args: Additional arguments passed to the progress bar implementation.
-    :type args: tuple
-    :param kwargs: Additional keyword arguments passed to the progress bar implementation.
-    :type kwargs: dict
-    :return: A wrapped iterable that provides progress tracking if a compatible library is available; otherwise, returns the original iterable.
-    :rtype: Any
-    """
+
+@overload
+def progbar(iterable: Iterable[T], *args: Any, backend: Literal["none"], **kwargs: Any) -> Iterable[T]: ...
+@overload
+def progbar(iterable: Iterable[T], *args: Any, backend: Literal["rich"], **kwargs: Any) -> Iterable[T]: ...
+@overload
+def progbar(iterable: Iterable[T], *args: Any, backend: Literal["tqdm"], **kwargs: Any) -> Tqdm[T]: ...
+@overload
+def progbar(iterable: Iterable[T], *args: Any, backend: Literal["auto"] = "auto", **kwargs: Any) -> Union[Iterable[T], Tqdm[T]]: ...
+
+
+def progbar(
+    iterable: Iterable[T],
+    *args: Any,
+    backend: str = "auto",
+    **kwargs: Any,
+) -> Union[Iterable[T], Tqdm[T]]:
     logger = get_logger()
+
+    allowed = {"auto", "rich", "tqdm", "none"}
+    if backend not in allowed:
+        logger.warning(f"Invalid backend '{backend}'. Using 'auto' instead.")
+        backend = "auto"
+
+    backend_lit = cast(Backend, backend)
 
     description = kwargs.get("description")
 
-    if check_dependency("rich"):
+    def _rich(it: Iterable[T]) -> Iterable[T]:
         from rich.progress import track
+        return track(it, *args, **kwargs)
 
-        return track(iterable, *args, **kwargs)
-
-    elif check_dependency("tqdm"):
+    def _tqdm(it: Iterable[T]) -> Tqdm[T]:
         from tqdm import tqdm
-
         if description and "desc" not in kwargs:
-            kwargs = kwargs.copy()
-            kwargs["desc"] = kwargs.pop("description")
+            local_kwargs = dict(kwargs)
+            local_kwargs["desc"] = local_kwargs.pop("description")
+        else:
+            local_kwargs = kwargs
+        return tqdm(it, *args, **local_kwargs)
 
-        return tqdm(iterable, *args, **kwargs)
-
-    else:
-        logger.warning(
-            "No progress bar library found. Install either 'rich' or 'tqdm' to enable progress bars."
-        )
+    if backend_lit == "none":
         return iterable
+
+    if backend_lit == "rich":
+        if not check_dependency("rich"):
+            raise ImportError("backend='rich' requested but 'rich' is not installed.")
+        return _rich(iterable)
+
+    if backend_lit == "tqdm":
+        if not check_dependency("tqdm"):
+            raise ImportError("backend='tqdm' requested but 'tqdm' is not installed.")
+        return _tqdm(iterable)
+
+    # auto
+    if check_dependency("rich"):
+        return _rich(iterable)
+    if check_dependency("tqdm"):
+        return _tqdm(iterable)
+
+    logger.warning("No progress bar library found. Install either 'rich' or 'tqdm'.")
+    return iterable

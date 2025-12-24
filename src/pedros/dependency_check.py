@@ -1,5 +1,8 @@
-from importlib.util import find_spec
+from __future__ import annotations
+
 from functools import cache
+from importlib.util import find_spec
+
 
 @cache
 def check_dependency(name: str) -> bool:

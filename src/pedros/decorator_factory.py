@@ -68,7 +68,6 @@ def make_around_decorator(
     before: BeforeHook[P, R] | None = None,
     after: AfterHook[P, R] | None = None,
 ) -> Callable[[Callable[P, R]], Callable[P, R]]:
-
     @wrapt.decorator
     def _wrapper(
         wrapped: Callable[P, R],
