@@ -1,7 +1,6 @@
 import time
 
-from pedros.logger import get_logger
-from pedros.progress_bar import progbar
+from pedros import get_logger, progbar
 
 
 def run_demo(backend = "auto"):

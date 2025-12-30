@@ -3,7 +3,9 @@ from __future__ import annotations
 import logging
 from typing import Optional
 
-from pedros.dependency_check import check_dependency
+from pedros.check_dependency import check_dependency
+
+__all__ = ["setup_logging", "get_logger"]
 
 
 def setup_logging(level: int = logging.INFO) -> None:

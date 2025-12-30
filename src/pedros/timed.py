@@ -6,6 +6,8 @@ from typing import Callable, ParamSpec, TypeVar
 from pedros.decorator_factory import CallContext, make_around_decorator
 from pedros.logger import get_logger
 
+__all__ = ["timed"]
+
 logger = get_logger()
 
 P = ParamSpec("P")
@@ -28,4 +30,16 @@ def _after(ctx: CallContext[P, R]) -> None:
 
 
 def timed(func: Callable[P, R]) -> Callable[P, R]:
+    """
+    Decorator to measure and log the execution time of a given function.
+
+    This decorator can be applied to any callable to wrap its execution
+    with pre- and post-processing logic using the `make_around_decorator`
+    utility, along with the `_before` and `_after` handlers.
+
+    :param func: The function to be wrapped and timed.
+    :type func: Callable[P, R]
+    :return: The decorated function with added timing functionality.
+    :rtype: Callable[P, R]
+    """
     return make_around_decorator(before=_before, after=_after)(func)
