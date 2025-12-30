@@ -9,37 +9,37 @@ import wrapt
 
 __all__ = ["CallContext", "make_around_decorator"]
 
-P = ParamSpec("P")
-R = TypeVar("R")
+Params = ParamSpec("Params")
+ReturnType = TypeVar("ReturnType")
 
 
 @dataclass
-class CallContext(Generic[P, R]):
-    wrapped: Callable[P, R]
+class CallContext(Generic[Params, ReturnType]):
+    wrapped: Callable[Params, ReturnType]
     instance: Any | None
-    args: P.args
-    kwargs: P.kwargs
-    result: R | Awaitable[R] | None = None
+    args: Params.args
+    kwargs: Params.kwargs
+    result: ReturnType | Awaitable[ReturnType] | None = None
     error: BaseException | None = None
     extra: dict[str, Any] = field(default_factory=dict)
 
-    def set_result(self, value: R | Awaitable[R]) -> None:
+    def set_result(self, value: ReturnType | Awaitable[ReturnType]) -> None:
         self.result = value
 
     def set_error(self, err: BaseException) -> None:
         self.error = err
 
 
-BeforeHook = Callable[[CallContext[P, R]], None]
-AfterHook = Callable[[CallContext[P, R]], None]
+BeforeHook = Callable[[CallContext[Params, ReturnType]], None]
+AfterHook = Callable[[CallContext[Params, ReturnType]], None]
 
 
-class _HookContext(Generic[P, R]):
+class _HookContext(Generic[Params, ReturnType]):
     def __init__(
         self,
-        ctx: CallContext[P, R],
-        before: BeforeHook[P, R] | None,
-        after: AfterHook[P, R] | None,
+            ctx: CallContext[Params, ReturnType],
+            before: BeforeHook[Params, ReturnType] | None,
+            after: AfterHook[Params, ReturnType] | None,
     ) -> None:
         self._ctx = ctx
         self._before = before
@@ -67,21 +67,21 @@ class _HookContext(Generic[P, R]):
 
 def make_around_decorator(
     *,
-    before: BeforeHook[P, R] | None = None,
-    after: AfterHook[P, R] | None = None,
-) -> Callable[[Callable[P, R]], Callable[P, R]]:
+        before: BeforeHook[Params, ReturnType] | None = None,
+        after: AfterHook[Params, ReturnType] | None = None,
+) -> Callable[[Callable[Params, ReturnType]], Callable[Params, ReturnType]]:
     @wrapt.decorator
     def _wrapper(
-        wrapped: Callable[P, R],
+            wrapped: Callable[Params, ReturnType],
         instance: Any | None,
         args: tuple[Any, ...],
         kwargs: dict[str, Any],
-    ) -> R | Awaitable[R]:
-        ctx: CallContext[P, R] = CallContext(
-            wrapped=cast(Callable[P, R], wrapped),
+    ) -> ReturnType | Awaitable[ReturnType]:
+        ctx: CallContext[Params, ReturnType] = CallContext(
+            wrapped=cast(Callable[Params, ReturnType], wrapped),
             instance=instance,
-            args=cast(P.args, args),
-            kwargs=cast(P.kwargs, kwargs),
+            args=cast(Params.args, args),
+            kwargs=cast(Params.kwargs, kwargs),
         )
 
         is_async = inspect.iscoroutinefunction(wrapped)
@@ -89,18 +89,18 @@ def make_around_decorator(
         if not is_async:
             with _HookContext(ctx, before, after):
                 value = wrapped(*args, **kwargs)
-                ctx.set_result(cast(R, value))
-                return cast(R, value)
+                ctx.set_result(cast(ReturnType, value))
+                return cast(ReturnType, value)
 
-        async def _run_async() -> R:
+        async def _run_async() -> ReturnType:
             with _HookContext(ctx, before, after):
-                wrapped_async = cast(Callable[..., Awaitable[R]], wrapped)
+                wrapped_async = cast(Callable[..., Awaitable[ReturnType]], wrapped)
                 value = await wrapped_async(*args, **kwargs)
-                ctx.set_result(cast(R, value))
-                return cast(R, value)
+                ctx.set_result(cast(ReturnType, value))
+                return cast(ReturnType, value)
 
         coro = _run_async()
         ctx.set_result(coro)
         return coro
 
-    return cast(Callable[[Callable[P, R]], Callable[P, R]], _wrapper)
+    return cast(Callable[[Callable[Params, ReturnType]], Callable[Params, ReturnType]], _wrapper)

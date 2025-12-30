@@ -12,7 +12,7 @@ A small package of reusable utilities for Python projects.
 
 🎯 **Core Utilities**:
 
-- `check_dependency(name: str) -> bool` - Check if a Python package is available
+- `has_dep(name: str) -> bool` - Check if a Python package is available
 - `setup_logging(level: int = logging.INFO) -> None` - Configure logging with optional Rich support
 - `get_logger(name: str = None) -> logging.Logger` - Get a pre-configured logger instance
 - `progbar(iterable, *, backend: str = "auto", **kwargs) -> Iterable` - Progress bar with multiple backend support
@@ -125,9 +125,9 @@ print(f"Function took {elapsed_time} seconds")
 Check if optional dependencies are available:
 
 ```python
-from pedros import check_dependency
+from pedros import has_dep
 
-if check_dependency("rich"):
+if has_dep("rich"):
     print("Rich is available!")
 else:
     print("Rich is not installed")
@@ -139,14 +139,14 @@ else:
 
 ```python
 import logging
-from pedros import check_dependency, setup_logging, get_logger, progbar, timed
+from pedros import has_dep, setup_logging, get_logger, progbar, timed
 
 # Configure logging
 setup_logging(logging.DEBUG)
 logger = get_logger("my_app")
 
 # Check for optional dependencies
-if check_dependency("rich"):
+if has_dep("rich"):
     logger.info("Rich is available for enhanced logging")
 
 # Use progress bar
