@@ -2,8 +2,10 @@ from __future__ import annotations
 
 from typing import Any, Iterable, Literal, TypeVar, cast
 
-from pedros.dependency_check import check_dependency
+from pedros.check_dependency import check_dependency
 from pedros.logger import get_logger
+
+__all__ = ["progbar"]
 
 T = TypeVar("T")
 Backend = Literal["auto", "rich", "tqdm", "none"]
@@ -44,12 +46,9 @@ def progbar(
     """
     logger = get_logger()
 
-    allowed = ("auto", "rich", "tqdm", "none")
+    allowed: tuple[Backend, ...] = ("auto", "rich", "tqdm", "none")
 
-    if isinstance(backend, str):
-        backend_norm = backend.strip().lower()
-    else:
-        backend_norm = cast(str, backend)
+    backend_norm = backend.strip().lower() if isinstance(backend, str) else backend
 
     if backend_norm not in allowed:
         logger.warning(f"Invalid backend '{backend}'. Falling back to 'auto'.")
