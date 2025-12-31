@@ -9,6 +9,8 @@ authors = [
 ]
 requires-python = ">=3.10"
 dependencies = [
+    "hypothesis>=6.148.8",
+    "pytest-benchmark>=5.2.3",
     "wrapt>=2.0.1",
 ]
 
