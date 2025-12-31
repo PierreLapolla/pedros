@@ -1,6 +1,6 @@
 import pytest
 
-from pedros.decorator_factory import CallContext, make_around_decorator
+from pedros.decorators.decorator_factory import CallContext, make_around_decorator
 
 
 def test_make_around_decorator_sync():

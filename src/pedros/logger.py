@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from typing import Optional
 
-from pedros.has_dep import has_dep
+from pedros.utils.has_dep import has_dep
 
 __all__ = ["setup_logging", "get_logger"]
 

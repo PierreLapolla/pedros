@@ -2,7 +2,7 @@ from time import sleep
 
 import pytest
 
-from pedros.timed import timed
+from pedros.decorators.timed import timed
 
 
 def test_timed_sync():

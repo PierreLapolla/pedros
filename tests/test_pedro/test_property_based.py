@@ -5,9 +5,9 @@ from hypothesis import given, strategies as st
 from hypothesis.strategies import text, integers, booleans, none
 
 from pedros.logger import get_logger, setup_logging
-from pedros.timed import timed
-from pedros.progbar import progbar
-from pedros.decorator_factory import make_around_decorator
+from pedros.decorators.timed import timed
+from pedros.utils.progbar import progbar
+from pedros.decorators.decorator_factory import make_around_decorator
 
 
 class TestLoggerPropertyBased:

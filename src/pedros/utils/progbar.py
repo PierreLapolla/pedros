@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Iterable, Literal, TypeVar, cast
 
-from pedros.has_dep import has_dep
+from pedros.utils.has_dep import has_dep
 from pedros.logger import get_logger
 
 __all__ = ["progbar"]

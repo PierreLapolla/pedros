@@ -3,7 +3,7 @@ from __future__ import annotations
 from time import perf_counter
 from typing import Callable, ParamSpec, TypeVar
 
-from pedros.decorator_factory import CallContext, make_around_decorator
+from pedros.decorators.decorator_factory import CallContext, make_around_decorator
 from pedros.logger import get_logger
 
 __all__ = ["timed"]
