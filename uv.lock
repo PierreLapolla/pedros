@@ -238,33 +238,31 @@ name = "pedros"
 version = "0.0.10"
 source = { editable = "." }
 dependencies = [
-    { name = "hypothesis" },
-    { name = "pytest-benchmark" },
     { name = "wrapt" },
 ]
 
 [package.dev-dependencies]
 dev = [
+    { name = "hypothesis" },
     { name = "pre-commit" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
+    { name = "pytest-benchmark" },
     { name = "pytest-cov" },
     { name = "rich" },
     { name = "tqdm" },
 ]
 
 [package.metadata]
-requires-dist = [
-    { name = "hypothesis", specifier = ">=6.148.8" },
-    { name = "pytest-benchmark", specifier = ">=5.2.3" },
-    { name = "wrapt", specifier = ">=2.0.1" },
-]
+requires-dist = [{ name = "wrapt", specifier = ">=2.0.1" }]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "hypothesis", specifier = ">=6.148.8" },
     { name = "pre-commit", specifier = ">=4.5.0" },
     { name = "pytest", specifier = ">=9.0.2" },
     { name = "pytest-asyncio", specifier = ">=1.3.0" },
+    { name = "pytest-benchmark", specifier = ">=5.2.3" },
     { name = "pytest-cov", specifier = ">=7.0.0" },
     { name = "rich", specifier = ">=14.2.0" },
     { name = "tqdm", specifier = ">=4.67.1" },
