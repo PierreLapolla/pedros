@@ -3,22 +3,22 @@ from __future__ import annotations
 from time import perf_counter
 from typing import Callable, ParamSpec, TypeVar
 
-from pedros.decorator_factory import CallContext, make_around_decorator
+from pedros.decorators.decorator_factory import CallContext, make_around_decorator
 from pedros.logger import get_logger
 
 __all__ = ["timed"]
 
 logger = get_logger()
 
-P = ParamSpec("P")
-R = TypeVar("R")
+Params = ParamSpec("Params")
+ReturnType = TypeVar("ReturnType")
 
 
-def _before(ctx: CallContext[P, R]) -> None:
+def _before(ctx: CallContext[Params, ReturnType]) -> None:
     ctx.extra["start_time"] = perf_counter()
 
 
-def _after(ctx: CallContext[P, R]) -> None:
+def _after(ctx: CallContext[Params, ReturnType]) -> None:
     start_time = ctx.extra.get("start_time")
     if start_time is None:
         return
@@ -29,7 +29,7 @@ def _after(ctx: CallContext[P, R]) -> None:
     logger.info(f"{ctx.wrapped.__name__} took {elapsed} seconds to execute.")
 
 
-def timed(func: Callable[P, R]) -> Callable[P, R]:
+def timed(func: Callable[Params, ReturnType]) -> Callable[Params, ReturnType]:
     """
     Decorator to measure and log the execution time of a given function.
 
@@ -38,8 +38,8 @@ def timed(func: Callable[P, R]) -> Callable[P, R]:
     utility, along with the `_before` and `_after` handlers.
 
     :param func: The function to be wrapped and timed.
-    :type func: Callable[P, R]
+    :type func: Callable[Params, ReturnType]
     :return: The decorated function with added timing functionality.
-    :rtype: Callable[P, R]
+    :rtype: Callable[Params, ReturnType]
     """
     return make_around_decorator(before=_before, after=_after)(func)

@@ -1,12 +1,11 @@
 import logging
 from unittest.mock import patch
 
-from pedros import check_dependency, get_logger, setup_logging
+from pedros import get_logger, setup_logging
 
 
 def run_demo(label: str):
     print(f"\n--- DEMO: {label} ---")
-    check_dependency.cache_clear()
 
     setup_logging(level=logging.DEBUG)
     logger = get_logger()
@@ -19,7 +18,6 @@ def run_demo(label: str):
 
 
 if __name__ == "__main__":
-
     run_demo("native environment")
 
     with patch("importlib.util.find_spec", return_value=None):

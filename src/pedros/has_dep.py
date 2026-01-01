@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-from functools import cache
 from importlib.util import find_spec
 
-__all__ = ["check_dependency"]
+__all__ = ["has_dep"]
 
 
-@cache
-def check_dependency(name: str) -> bool:
+def has_dep(name: str) -> bool:
     """
     Check if a specified dependency is available on the system.
 

@@ -3,7 +3,7 @@ import time
 from pedros import get_logger, progbar
 
 
-def run_demo(backend = "auto"):
+def run_demo(backend="auto"):
     logger = get_logger()
     logger.info(f"Using backend: {backend}")
     for _ in progbar(range(10), backend=backend):

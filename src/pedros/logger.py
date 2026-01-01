@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from typing import Optional
 
-from pedros.check_dependency import check_dependency
+from pedros.has_dep import has_dep
 
 __all__ = ["setup_logging", "get_logger"]
 
@@ -25,7 +25,7 @@ def setup_logging(level: int = logging.INFO) -> None:
     datefmt = None
     handlers = []
 
-    if check_dependency("rich"):
+    if has_dep("rich"):
         from rich.logging import RichHandler
 
         format = "%(message)s"

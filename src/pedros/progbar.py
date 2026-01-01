@@ -2,21 +2,21 @@ from __future__ import annotations
 
 from typing import Any, Iterable, Literal, TypeVar, cast
 
-from pedros.check_dependency import check_dependency
+from pedros.has_dep import has_dep
 from pedros.logger import get_logger
 
 __all__ = ["progbar"]
 
-T = TypeVar("T")
+ItemType = TypeVar("ItemType")
 Backend = Literal["auto", "rich", "tqdm", "none"]
 
 
 def progbar(
-    iterable: Iterable[T],
-    *args: Any,
+        iterable: Iterable[ItemType],
+        *args: Any,
         backend: Backend | str = "auto",
-    **kwargs: Any,
-) -> Iterable[T]:
+        **kwargs: Any,
+) -> Iterable[ItemType]:
     """
     Displays a progress bar for the provided iterable, using a chosen backend library.
 
@@ -60,8 +60,8 @@ def progbar(
         if backend_lit == "none":
             return "none"
 
-        rich_ok = check_dependency("rich")
-        tqdm_ok = check_dependency("tqdm")
+        rich_ok = has_dep("rich")
+        tqdm_ok = has_dep("tqdm")
 
         if backend_lit == "rich":
             if rich_ok:
