@@ -1,11 +1,9 @@
 """Performance benchmark tests for decorators and utilities."""
 
-import time
-import pytest
-from pedros.decorators.timed import timed
-from pedros.utils.progbar import progbar
 from pedros.decorators.decorator_factory import make_around_decorator
+from pedros.decorators.timed import timed
 from pedros.logger import get_logger, setup_logging
+from pedros.progbar import progbar
 
 
 class TestDecoratorPerformance:

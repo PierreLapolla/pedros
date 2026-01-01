@@ -9,10 +9,10 @@ Public API:
 - timed: Decorator to measure execution time
 """
 
-from pedros.utils.has_dep import has_dep
-from pedros.logger import setup_logging, get_logger
-from pedros.utils.progbar import progbar
 from pedros.decorators.timed import timed
+from pedros.has_dep import has_dep
+from pedros.logger import setup_logging, get_logger
+from pedros.progbar import progbar
 
 setup_logging()
 

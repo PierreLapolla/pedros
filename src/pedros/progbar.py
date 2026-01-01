@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Iterable, Literal, TypeVar, cast
 
-from pedros.utils.has_dep import has_dep
+from pedros.has_dep import has_dep
 from pedros.logger import get_logger
 
 __all__ = ["progbar"]
@@ -13,9 +13,9 @@ Backend = Literal["auto", "rich", "tqdm", "none"]
 
 def progbar(
         iterable: Iterable[ItemType],
-    *args: Any,
+        *args: Any,
         backend: Backend | str = "auto",
-    **kwargs: Any,
+        **kwargs: Any,
 ) -> Iterable[ItemType]:
     """
     Displays a progress bar for the provided iterable, using a chosen backend library.

@@ -2,172 +2,47 @@
 
 [![PyPI](https://img.shields.io/pypi/v/pedros)](https://pypi.org/project/pedros/)  
 
-A small package of reusable utilities for Python projects.
+A small package of reusable Python utilities for Python projects.
 
 ## Features
 
-🔧 **Easy-to-use API** - All functions available directly from `pedros` package
-
-📦 **Dependency Management** - Smart detection of optional dependencies with graceful fallbacks
-
-🎯 **Core Utilities**:
-
-- `has_dep(name: str) -> bool` - Check if a Python package is available
-- `setup_logging(level: int = logging.INFO) -> None` - Configure logging with optional Rich support
-- `get_logger(name: str = None) -> logging.Logger` - Get a pre-configured logger instance
-- `progbar(iterable, *, backend: str = "auto", **kwargs) -> Iterable` - Progress bar with multiple backend support
-- `timed(func) -> func` - Decorator to measure and log function execution time
-
-🚀 **Key Benefits**:
-
-- **Zero Configuration** - Works out of the box with sensible defaults
-- **Flexible Backends** - Auto-detects best available progress bar (rich or tqdm)
-- **Type Safe** - Comprehensive type hints throughout
-- **Async Support** - Works with both synchronous and asynchronous functions
-- **Production Ready** - Robust error handling and logging
+- **Dependency Management**: Smart detection of optional dependencies
+- **Logging**: Configure logging with optional Rich support
+- **Progress Bars**: Multiple backend support (rich, tqdm, auto)
+- **Timing**: Measure and log function execution time
+- **Type Safe**: Comprehensive type hints throughout
 
 ## Installation
 
 ```bash
-  pip install pedros
+pip install pedros
 ```
 
 ## Quickstart
 
-### Easy Import API
-
-All main functions are available directly from the `pedros` package:
-
 ```python
-from pedros import check_dependency, setup_logging, get_logger, progbar, timed
-```
-
-### Logger
-
-Basic usage:
-```python
-from pedros import get_logger
-
-logger = get_logger()
-logger.info("This is an info message")
-```
-
-Advanced configuration:
-```python
-import logging
-from pedros import setup_logging, get_logger
-
-# Configure logging level
-setup_logging(logging.DEBUG)
-
-# Get a custom-named logger
-logger = get_logger("my_app")
-
-logger.debug("Debug message")
-logger.info("Info message")
-logger.warning("Warning message")
-logger.error("Error message")
-```
-
-### Progress Bar
-
-Simple usage:
-
-```python
-from pedros import progbar
-
-# Auto-detects best available backend (rich or tqdm)
-for item in progbar([1, 2, 3, 4, 5]):
-    # Process item
-    pass
-```
-
-With specific backend:
-
-```python
-from pedros import progbar
-
-# Force specific backend
-for item in progbar(range(100), backend="tqdm", desc="Processing"):
-    # Process item
-    pass
-```
-
-### Timed Decorator
-
-Measure function execution time:
-
-```python
-from pedros import timed
-
-@timed
-def process_data():
-    # Your function implementation
-    return "result"
-
-result = process_data()  # Automatically logs execution time
-```
-
-Access timing information:
-```python
-@timed
-def my_function():
-    # Function implementation
-    pass
-
-my_function()
-elapsed_time = getattr(my_function, "__last_elapsed__")
-print(f"Function took {elapsed_time} seconds")
-```
-
-### Dependency Checking
-
-Check if optional dependencies are available:
-
-```python
-from pedros import has_dep
-
-if has_dep("rich"):
-    print("Rich is available!")
-else:
-    print("Rich is not installed")
-```
-
-## Examples
-
-### Complete Usage Example
-
-```python
-import logging
 from pedros import has_dep, setup_logging, get_logger, progbar, timed
 
 # Configure logging
-setup_logging(logging.DEBUG)
-logger = get_logger("my_app")
+setup_logging()
+logger = get_logger()
 
-# Check for optional dependencies
+# Check dependencies
 if has_dep("rich"):
-    logger.info("Rich is available for enhanced logging")
+    logger.info("Rich is available!")
 
 # Use progress bar
-logger.info("Starting data processing...")
-data = range(100)
+for item in progbar(range(10)):
+    # Process item
+    pass
 
+
+# Time function execution
 @timed
-def process_items(items):
-    """Process items with progress tracking."""
-    processed = []
-    for item in progbar(items, desc="Processing items"):
-        # Simulate work
-        processed.append(item * 2)
-    return processed
+def process_data():
+    return "result"
 
-result = process_items(data)
-logger.info(f"Processed {len(result)} items")
-
-# Access timing information
-elapsed = getattr(process_items, "__last_elapsed__")
-logger.info(f"Processing took {elapsed:.2f} seconds")
+result = process_data()  # Automatically logs execution time
 ```
 
 ### Advanced Progress Bar Usage

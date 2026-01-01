@@ -1,13 +1,14 @@
 """Property-based tests using Hypothesis for edge cases and boundary conditions."""
 
 import logging
-from hypothesis import given, strategies as st
-from hypothesis.strategies import text, integers, booleans, none
 
-from pedros.logger import get_logger, setup_logging
-from pedros.decorators.timed import timed
-from pedros.utils.progbar import progbar
+from hypothesis import given
+from hypothesis.strategies import text, integers, booleans
+
 from pedros.decorators.decorator_factory import make_around_decorator
+from pedros.decorators.timed import timed
+from pedros.logger import get_logger, setup_logging
+from pedros.progbar import progbar
 
 
 class TestLoggerPropertyBased:

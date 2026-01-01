@@ -1,4 +1,4 @@
-from pedros.utils.has_dep import has_dep
+from pedros.has_dep import has_dep
 
 
 def test_has_dep_available():

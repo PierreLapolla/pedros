@@ -1,4 +1,4 @@
-from pedros.utils.progbar import progbar
+from pedros.progbar import progbar
 
 
 def test_progbar_no_backend():
