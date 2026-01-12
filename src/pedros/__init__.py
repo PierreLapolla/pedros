@@ -7,8 +7,10 @@ Public API:
 - get_logger: Get a configured logger instance
 - progbar: Progress bar for iterables with multiple backend support
 - timed: Decorator to measure execution time
+- safe: Decorator to encapsulate a function in a try-except block
 """
 
+from pedros.decorators.safe import safe
 from pedros.decorators.timed import timed
 from pedros.has_dep import has_dep
 from pedros.logger import setup_logging, get_logger
@@ -21,5 +23,6 @@ __all__ = [
     "setup_logging",
     "get_logger",
     "progbar",
-    "timed"
+    "timed",
+    "safe",
 ]

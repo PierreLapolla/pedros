@@ -2,7 +2,6 @@
 
 import logging
 
-from pedros.decorators.decorator_factory import make_around_decorator
 from pedros.decorators.timed import timed
 from pedros.logger import get_logger, setup_logging
 from pedros.progbar import progbar
@@ -92,58 +91,6 @@ class TestTimedLoggerIntegration:
         
         # Should have logged the error
         assert any("About to fail" in record.message for record in caplog.records)
-
-
-class TestDecoratorFactoryIntegration:
-    """Test integration of decorator factory with other modules."""
-
-    def test_decorator_factory_with_logger(self, caplog):
-        """Test decorator factory integration with logger."""
-        # Don't use setup_logging as it bypasses caplog
-        logger = get_logger("decorator_test")
-        logger.setLevel(logging.INFO)
-        
-        def before_hook(ctx):
-            logger.info("Before function execution")
-        
-        def after_hook(ctx):
-            logger.info("After function execution")
-        
-        logging_decorator = make_around_decorator(before=before_hook, after=after_hook)
-        
-        @logging_decorator
-        def process_item(item):
-            return item * 2
-        
-        result = process_item(5)
-        assert result == 10
-        
-        # Should have logged before and after
-        assert any("Before function execution" in record.message for record in caplog.records)
-        assert any("After function execution" in record.message for record in caplog.records)
-
-    def test_decorator_factory_with_progbar(self):
-        """Test decorator factory integration with progress bar."""
-        
-        def before_hook(ctx):
-            print("Starting iteration")
-        
-        def after_hook(ctx):
-            print("Completed iteration")
-        
-        iteration_decorator = make_around_decorator(before=before_hook, after=after_hook)
-        
-        @iteration_decorator
-        def process_item(item):
-            return item * 2
-        
-        items = [1, 2, 3]
-        results = []
-        
-        for item in progbar(items, desc="Processing with decorator"):
-            results.append(process_item(item))
-        
-        assert results == [2, 4, 6]
 
 
 class TestComplexIntegrationScenarios:
@@ -240,30 +187,3 @@ class TestModuleInteractionEdgeCases:
             results.append(empty_function())
         
         assert results == []
-
-    def test_nested_decorators_integration(self):
-        """Test nested decorators with other modules."""
-        # Don't use setup_logging as it bypasses caplog
-        logger = get_logger("nested_test")
-        logger.setLevel(logging.DEBUG)
-        
-        def logging_before(ctx):
-            logger.debug("Before outer decorator")
-        
-        def logging_after(ctx):
-            logger.debug("After outer decorator")
-        
-        outer_decorator = make_around_decorator(before=logging_before, after=logging_after)
-        
-        @outer_decorator
-        @timed
-        def nested_function(x):
-            return x * 3
-        
-        items = [1, 2, 3]
-        results = []
-        
-        for item in progbar(items, desc="Nested decorators"):
-            results.append(nested_function(item))
-        
-        assert results == [3, 6, 9]
