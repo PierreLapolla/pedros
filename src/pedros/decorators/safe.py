@@ -67,45 +67,42 @@ def safe(
         `func` is None, it returns the decorator to be used with a target function.
     """
 
-    def decorator(wrapped: Callable[P, R]) -> Callable[P, R]:
-        @wrapt.decorator
-        def wrapper(
-                wrapped: Callable[P, R],
-                instance: Any,
-                args: Any,
-                kwargs: Any,
-        ) -> R | Awaitable[R]:
+    @wrapt.decorator
+    def wrapper(
+            wrapped: Callable[P, R],
+            instance: Any,
+            args: Any,
+            kwargs: Any,
+    ) -> R | Awaitable[R]:
 
-            @contextlib.contextmanager
-            def _handle_exception() -> Generator[None, None, None]:
-                try:
-                    yield
-                except catch as e:
-                    if log_level and log_level.upper() != "NONE":
-                        log_msg = f"Error in {wrapped.__name__}: {str(e)}"
-                        getattr(logger, log_level.lower())(log_msg, exc_info=True)
+        @contextlib.contextmanager
+        def _handle_exception() -> Generator[None, None, None]:
+            try:
+                yield
+            except catch as e:
+                if log_level and log_level.upper() != "NONE":
+                    log_msg = f"Error in {wrapped.__name__}: {str(e)}"
+                    getattr(logger, log_level.lower())(log_msg, exc_info=True)
 
-                    if on_error:
-                        on_error(e)
+                if on_error:
+                    on_error(e)
 
-                    if re_raise:
-                        raise
-                finally:
-                    if on_finally:
-                        on_finally()
+                if re_raise:
+                    raise
+            finally:
+                if on_finally:
+                    on_finally()
 
-            if inspect.iscoroutinefunction(wrapped):
-                async def _async_wrapper() -> R:
-                    with _handle_exception():
-                        return await wrapped(*args, **kwargs)
+        if inspect.iscoroutinefunction(wrapped):
+            async def _async_wrapper() -> R:
+                with _handle_exception():
+                    return await wrapped(*args, **kwargs)
 
-                return _async_wrapper()
+            return _async_wrapper()
 
-            with _handle_exception():
-                return wrapped(*args, **kwargs)
-
-        return wrapper(wrapped)
+        with _handle_exception():
+            return wrapped(*args, **kwargs)
 
     if func is None:
-        return decorator
-    return decorator(func)
+        return wrapper
+    return wrapper(func)

@@ -86,39 +86,36 @@ def timed(
         time.
     """
 
-    def decorator(wrapped: Callable[P, R]) -> Callable[P, R]:
-        @wrapt.decorator
-        def wrapper(
-                wrapped: Callable[P, R],
-                instance: Any,
-                args: Any,
-                kwargs: Any,
-        ) -> R | Awaitable[R]:
-            start_time = perf_counter()
+    @wrapt.decorator
+    def wrapper(
+            wrapped: Callable[P, R],
+            instance: Any,
+            args: Any,
+            kwargs: Any,
+    ) -> R | Awaitable[R]:
+        start_time = perf_counter()
 
-            @contextlib.contextmanager
-            def _time_it() -> Generator[None, None, None]:
-                try:
-                    yield
-                finally:
-                    elapsed = perf_counter() - start_time
+        @contextlib.contextmanager
+        def _time_it() -> Generator[None, None, None]:
+            try:
+                yield
+            finally:
+                elapsed = perf_counter() - start_time
 
-                    if log_level and log_level.upper() != "NONE":
-                        log_msg = f"{wrapped.__name__} took {_format_time(elapsed)} to execute."
-                        getattr(logger, log_level.lower())(log_msg)
+                if log_level and log_level.upper() != "NONE":
+                    log_msg = f"{wrapped.__name__} took {_format_time(elapsed)} to execute."
+                    getattr(logger, log_level.lower())(log_msg)
 
-            if inspect.iscoroutinefunction(wrapped):
-                async def _async_wrapper() -> R:
-                    with _time_it():
-                        return await wrapped(*args, **kwargs)
+        if inspect.iscoroutinefunction(wrapped):
+            async def _async_wrapper() -> R:
+                with _time_it():
+                    return await wrapped(*args, **kwargs)
 
-                return _async_wrapper()
+            return _async_wrapper()
 
-            with _time_it():
-                return wrapped(*args, **kwargs)
-
-        return wrapper(wrapped)
+        with _time_it():
+            return wrapped(*args, **kwargs)
 
     if func is None:
-        return decorator
-    return decorator(func)
+        return wrapper
+    return wrapper(func)
