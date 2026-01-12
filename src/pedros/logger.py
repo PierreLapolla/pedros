@@ -21,25 +21,24 @@ def setup_logging(level: int = logging.INFO) -> None:
     :type level: int
     :return: None
     """
-    format = None
+    fmt = None
     datefmt = None
     handlers = []
 
     if has_dep("rich"):
         from rich.logging import RichHandler
 
-        format = "%(message)s"
         handler = RichHandler(rich_tracebacks=True)
         handlers.append(handler)
     else:
-        format = "%(asctime)s | %(levelname)-8s | %(message)s"
+        fmt = "%(asctime)s | %(levelname)-8s | %(message)s"
         datefmt = "%Y-%m-%d %H:%M:%S"
         handler = logging.StreamHandler()
         handlers.append(handler)
 
     logging.basicConfig(
         level=level,
-        format=format,
+        format=fmt,
         datefmt=datefmt,
         handlers=handlers,
         force=True,

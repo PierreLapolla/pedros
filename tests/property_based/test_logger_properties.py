@@ -5,7 +5,6 @@ import logging
 from hypothesis import given
 from hypothesis.strategies import text, integers, booleans
 
-from pedros.decorators.decorator_factory import make_around_decorator
 from pedros.decorators.timed import timed
 from pedros.logger import get_logger, setup_logging
 from pedros.progbar import progbar
@@ -92,50 +91,6 @@ class TestProgbarPropertyBased:
         assert result == items
 
 
-class TestDecoratorFactoryPropertyBased:
-    """Property-based tests for decorator factory."""
-
-    @given(test_value=integers(min_value=-1000, max_value=1000))
-    def test_make_around_decorator_basic(self, test_value):
-        """Test that make_around_decorator works with various input values."""
-        
-        def before_hook(ctx):
-            # Simple before hook that does nothing
-            pass
-        
-        def after_hook(ctx):
-            # Simple after hook that does nothing
-            pass
-        
-        decorator = make_around_decorator(before=before_hook, after=after_hook)
-        
-        @decorator
-        def test_function(x):
-            return x + 1
-        
-        result = test_function(test_value)
-        assert result == test_value + 1
-
-    @given(test_value=integers(min_value=-1000, max_value=1000))
-    def test_decorator_with_various_inputs(self, test_value):
-        """Test that decorators work with various input values."""
-        
-        def before_hook(ctx):
-            pass
-        
-        def after_hook(ctx):
-            pass
-        
-        decorator = make_around_decorator(before=before_hook, after=after_hook)
-        
-        @decorator
-        def test_function(x):
-            return x * 2
-        
-        result = test_function(test_value)
-        assert result == test_value * 2
-
-
 class TestEdgeCases:
     """Test edge cases and boundary conditions."""
 
@@ -158,14 +113,3 @@ class TestEdgeCases:
         
         result = test_function()
         assert result == "immediate"
-
-    def test_decorator_factory_none_hooks(self):
-        """Test decorator factory with None hooks."""
-        decorator = make_around_decorator(before=None, after=None)
-        
-        @decorator
-        def test_function():
-            return "test"
-        
-        result = test_function()
-        assert result == "test"

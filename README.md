@@ -6,11 +6,11 @@ A small package of reusable Python utilities for Python projects.
 
 ## Features
 
-- **Dependency Management**: Smart detection of optional dependencies
-- **Logging**: Configure logging with optional Rich support
-- **Progress Bars**: Multiple backend support (rich, tqdm, auto)
-- **Timing**: Measure and log function execution time
-- **Type Safe**: Comprehensive type hints throughout
+- **Dependency Management**: Smart detection of optional dependencies (rich, tqdm)
+- **Logging**: Simplified logging setup with optional Rich support
+- **Progress Bars**: Unified progress bar API with multiple backends
+- **Decorators**: Robust decorators for timing (`@timed`) and error handling (`@safe`)
+- **Type Safe**: Comprehensive type hints and PEP 561 compliance
 
 ## Installation
 
@@ -18,84 +18,41 @@ A small package of reusable Python utilities for Python projects.
 pip install pedros
 ```
 
+OR
+
+```bash
+uv add pedros
+```
+
 ## Quickstart
 
 ```python
-from pedros import has_dep, setup_logging, get_logger, progbar, timed
+from pedros import setup_logging, get_logger, progbar, timed, safe
 
 # Configure logging
 setup_logging()
 logger = get_logger()
 
-# Check dependencies
-if has_dep("rich"):
-    logger.info("Rich is available!")
-
-# Use progress bar
-for item in progbar(range(10)):
-    # Process item
+# Use progress bar (auto-selects backend: rich > tqdm > basic)
+for item in progbar(range(10), desc="Processing"):
     pass
-
 
 # Time function execution
 @timed
 def process_data():
     return "result"
 
-result = process_data()  # Automatically logs execution time
-```
 
-### Advanced Progress Bar Usage
+process_data()  # Logs: "process_data took 1.23 ms to execute."
 
-```python
-from pedros import progbar
 
-# Different backend options
-for item in progbar(range(50), backend="rich", description="Rich progress"):
-    pass
+# Safely handle errors
+@safe(re_raise=False)
+def risky_operation():
+    raise ValueError("Something went wrong")
 
-for item in progbar(range(50), backend="tqdm", desc="TQDM progress"):
-    pass
 
-# Disable progress bar
-for item in progbar(range(50), backend="none"):
-    pass
-```
-
-### Logging Configuration
-
-```python
-import logging
-from pedros import setup_logging, get_logger
-
-# Different logging levels
-setup_logging(logging.WARNING)  # Only warnings and errors
-logger = get_logger("production")
-
-setup_logging(logging.DEBUG)   # All messages including debug
-debug_logger = get_logger("development")
-
-# Logger hierarchy
-parent_logger = get_logger("app")
-child_logger = get_logger("app.module")
-```
-
-## Installation
-
-### Basic Installation
-
-```bash
-pip install pedros
-```
-
-### With Optional Dependencies
-
-For enhanced functionality, install with optional dependencies:
-
-```bash
-pip install pedros[rich]    # For rich logging and progress bars
-pip install pedros[tqdm]    # For tqdm progress bars
-pip install pedros[all]     # All optional dependencies
+risky_operation()  # Logs the error but doesn't crash
 ```
 
 ## License
