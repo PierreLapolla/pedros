@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import contextlib
 import inspect
-from typing import Any, Awaitable, Callable, ParamSpec, TypeVar, overload, Generator
+from typing import Any, Awaitable, Callable, ParamSpec, TypeVar, overload, Generator, cast
 
 import wrapt
 
@@ -17,9 +17,11 @@ R = TypeVar("R")
 
 
 @overload
-def safe(
-        func: Callable[P, R]
-) -> Callable[P, R]: ...
+def safe(func: Callable[P, R]) -> Callable[P, R]: ...
+
+
+@overload
+def safe(func: Callable[P, Awaitable[R]]) -> Callable[P, Awaitable[R]]: ...
 
 
 @overload
@@ -33,8 +35,19 @@ def safe(
 ) -> Callable[[Callable[P, R]], Callable[P, R]]: ...
 
 
+@overload
 def safe(
-        func: Callable[P, R] | None = None,
+        *,
+        catch: type[Exception] | tuple[type[Exception], ...] = Exception,
+        log_level: str | None = "ERROR",
+        re_raise: bool = True,
+        on_error: Callable[[Exception], Any] | None = None,
+        on_finally: Callable[[], Any] | None = None,
+) -> Callable[[Callable[P, Awaitable[R]]], Callable[P, Awaitable[R]]]: ...
+
+
+def safe(
+        func: Callable[P, Any] | None = None,
         *,
         catch: type[Exception] | tuple[type[Exception], ...] = Exception,
         log_level: str | None = "ERROR",
@@ -67,42 +80,42 @@ def safe(
         `func` is None, it returns the decorator to be used with a target function.
     """
 
-    @wrapt.decorator
-    def wrapper(
-            wrapped: Callable[P, R],
+    def decorator(wrapped_func: Callable[P, Any]) -> Callable[P, Any]:
+        @wrapt.decorator
+        def wrapper(
+                wrapped: Callable[P, Any],
             instance: Any,
-            args: Any,
-            kwargs: Any,
-    ) -> R | Awaitable[R]:
+                args: tuple[Any, ...],
+                kwargs: dict[str, Any],
+        ) -> Any:
+            @contextlib.contextmanager
+            def _execute() -> Generator[None, None, None]:
+                try:
+                    yield
+                except catch as e:
+                    if log_level and log_level.upper() != "NONE":
+                        log_msg = f"Error in {wrapped.__name__}: {str(e)}"
+                        getattr(logger, log_level.lower())(log_msg, exc_info=True)
 
-        @contextlib.contextmanager
-        def _handle_exception() -> Generator[None, None, None]:
-            try:
-                yield
-            except catch as e:
-                if log_level and log_level.upper() != "NONE":
-                    log_msg = f"Error in {wrapped.__name__}: {str(e)}"
-                    getattr(logger, log_level.lower())(log_msg, exc_info=True)
+                    if on_error:
+                        on_error(e)
 
-                if on_error:
-                    on_error(e)
+                    if re_raise:
+                        raise
+                finally:
+                    if on_finally:
+                        on_finally()
 
-                if re_raise:
-                    raise
-            finally:
-                if on_finally:
-                    on_finally()
+            if inspect.iscoroutinefunction(wrapped):
+                async def _async_call() -> Any:
+                    with _execute():
+                        return await wrapped(*args, **kwargs)
 
-        if inspect.iscoroutinefunction(wrapped):
-            async def _async_wrapper() -> R:
-                with _handle_exception():
-                    return await wrapped(*args, **kwargs)
+                return _async_call()
 
-            return _async_wrapper()
+            with _execute():
+                return wrapped(*args, **kwargs)
 
-        with _handle_exception():
-            return wrapped(*args, **kwargs)
+        return cast(Callable[P, Any], wrapper(wrapped_func))
 
-    if func is None:
-        return wrapper
-    return wrapper(func)
+    return decorator(func) if func is not None else decorator

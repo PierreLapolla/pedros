@@ -12,6 +12,7 @@ def test_safe_sync_success():
         return "ok"
 
     assert success() == "ok"
+    assert success.__name__ == "success"
 
 
 def test_safe_sync_error_re_raise(caplog):
@@ -68,6 +69,7 @@ async def test_safe_async_success():
         return "async ok"
 
     assert await success() == "async ok"
+    assert success.__name__ == "success"
 
 
 @pytest.mark.asyncio
@@ -165,3 +167,22 @@ def test_safe_none_log_string(caplog):
     with caplog.at_level(logging.DEBUG):
         fail()
         assert "silent fail" not in caplog.text
+
+
+def test_safe_no_args():
+    @safe()
+    def success():
+        return "ok"
+
+    assert success() == "ok"
+    assert success.__name__ == "success"
+
+
+@pytest.mark.asyncio
+async def test_safe_async_no_args():
+    @safe()
+    async def success():
+        return "async ok"
+
+    assert await success() == "async ok"
+    assert success.__name__ == "success"

@@ -1,6 +1,6 @@
 [project]
 name = "pedros"
-version = "0.12.1"
+version = "0.12.2"
 description = "Small utility package for my projects."
 readme = "README.md"
 license = {file = "LICENSE"}
@@ -18,7 +18,6 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 dev = [
-    "pre-commit>=4.5.0",
     "pytest>=9.0.2",
     "pytest-asyncio>=1.3.0",
     "pytest-cov>=7.0.0",
