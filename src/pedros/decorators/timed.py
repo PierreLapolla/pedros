@@ -3,7 +3,7 @@ from __future__ import annotations
 import contextlib
 import inspect
 from time import perf_counter
-from typing import Any, Awaitable, Callable, ParamSpec, TypeVar, overload, Generator
+from typing import Any, Awaitable, Callable, ParamSpec, TypeVar, overload, Generator, cast
 
 import wrapt
 
@@ -56,20 +56,25 @@ def _format_time(seconds: float) -> str:
 
 
 @overload
-def timed(
-        func: Callable[P, R]
-) -> Callable[P, R]: ...
+def timed(func: Callable[P, R]) -> Callable[P, R]: ...
+
+
+@overload
+def timed(func: Callable[P, Awaitable[R]]) -> Callable[P, Awaitable[R]]: ...
+
+
+@overload
+def timed(*, log_level: str | None = "INFO") -> Callable[[Callable[P, R]], Callable[P, R]]: ...
 
 
 @overload
 def timed(
-        *,
-        log_level: str | None = "INFO"
-) -> Callable[[Callable[P, R]], Callable[P, R]]: ...
+        *, log_level: str | None = "INFO"
+) -> Callable[[Callable[P, Awaitable[R]]], Callable[P, Awaitable[R]]]: ...
 
 
 def timed(
-        func: Callable[P, R] | None = None,
+        func: Callable[P, Any] | None = None,
         *,
         log_level: str | None = "INFO",
 ) -> Any:
@@ -86,36 +91,36 @@ def timed(
         time.
     """
 
-    @wrapt.decorator
-    def wrapper(
-            wrapped: Callable[P, R],
+    def decorator(wrapped_func: Callable[P, Any]) -> Callable[P, Any]:
+        @wrapt.decorator
+        def wrapper(
+                wrapped: Callable[P, Any],
             instance: Any,
-            args: Any,
-            kwargs: Any,
-    ) -> R | Awaitable[R]:
-        start_time = perf_counter()
+                args: tuple[Any, ...],
+                kwargs: dict[str, Any],
+        ) -> Any:
+            @contextlib.contextmanager
+            def _execute() -> Generator[None, None, None]:
+                try:
+                    start_time = perf_counter()
+                    yield
+                finally:
+                    elapsed = perf_counter() - start_time
 
-        @contextlib.contextmanager
-        def _time_it() -> Generator[None, None, None]:
-            try:
-                yield
-            finally:
-                elapsed = perf_counter() - start_time
+                    if log_level and log_level.upper() != "NONE":
+                        log_msg = f"{wrapped.__name__} took {_format_time(elapsed)} to execute."
+                        getattr(logger, log_level.lower())(log_msg)
 
-                if log_level and log_level.upper() != "NONE":
-                    log_msg = f"{wrapped.__name__} took {_format_time(elapsed)} to execute."
-                    getattr(logger, log_level.lower())(log_msg)
+            if inspect.iscoroutinefunction(wrapped):
+                async def _async_call() -> Any:
+                    with _execute():
+                        return await wrapped(*args, **kwargs)
 
-        if inspect.iscoroutinefunction(wrapped):
-            async def _async_wrapper() -> R:
-                with _time_it():
-                    return await wrapped(*args, **kwargs)
+                return _async_call()
 
-            return _async_wrapper()
+            with _execute():
+                return wrapped(*args, **kwargs)
 
-        with _time_it():
-            return wrapped(*args, **kwargs)
+        return cast(Callable[P, Any], wrapper(wrapped_func))
 
-    if func is None:
-        return wrapper
-    return wrapper(func)
+    return decorator(func) if func is not None else decorator

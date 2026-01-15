@@ -21,6 +21,7 @@ def test_timed_sync():
         return True
 
     assert func()
+    assert func.__name__ == "func"
 
 
 @pytest.mark.asyncio
@@ -31,6 +32,7 @@ async def test_timed_async():
         return True
 
     assert await func()
+    assert func.__name__ == "func"
 
 
 def test_timed_error():
@@ -84,3 +86,22 @@ def test_timed_none_log(caplog):
     with caplog.at_level("INFO"):
         assert func()
         assert "func took" not in caplog.text
+
+
+def test_timed_no_args():
+    @timed()
+    def success():
+        return "ok"
+
+    assert success() == "ok"
+    assert success.__name__ == "success"
+
+
+@pytest.mark.asyncio
+async def test_timed_async_no_args():
+    @timed()
+    async def success():
+        return "async ok"
+
+    assert await success() == "async ok"
+    assert success.__name__ == "success"
