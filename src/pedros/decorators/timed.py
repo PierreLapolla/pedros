@@ -1,9 +1,19 @@
 from __future__ import annotations
 
 import contextlib
+from datetime import timedelta
 import inspect
 from time import perf_counter
-from typing import Any, Awaitable, Callable, ParamSpec, TypeVar, overload, Generator, cast
+from typing import (
+    Any,
+    Awaitable,
+    Callable,
+    ParamSpec,
+    TypeVar,
+    overload,
+    Generator,
+    cast,
+)
 
 import wrapt
 
@@ -28,9 +38,7 @@ def _format_time(seconds: float) -> str:
     - Less than a millisecond: formatted as microseconds.
     - Less than a second: formatted as milliseconds.
     - Between a second and one minute: formatted as seconds.
-    - Between one minute and one hour: formatted as minutes and seconds.
-    - Greater than or equal to an hour: formatted as hours, minutes,
-      and seconds.
+    - Greater than or equal to one minute: formatted as hh:mm:ss.
 
     :param seconds: The time duration in seconds to be formatted.
     :type seconds: float
@@ -45,14 +53,10 @@ def _format_time(seconds: float) -> str:
         return f"{seconds * 1e3:.2f} ms"
     if seconds < 60:
         return f"{seconds:.2f} s"
-    if seconds < 3600:
-        minutes = int(seconds // 60)
-        secs = seconds % 60
-        return f"{minutes}:{secs:.2f} s"
-    hours = int(seconds // 3600)
-    minutes = int((seconds % 3600) // 60)
-    secs = seconds % 60
-    return f"{hours}:{minutes}:{secs:.2f} s"
+    total_seconds = int(timedelta(seconds=seconds).total_seconds())
+    hours, remainder = divmod(total_seconds, 3600)
+    minutes, secs = divmod(remainder, 60)
+    return f"{hours:02d}:{minutes:02d}:{secs:02d}"
 
 
 @overload
@@ -64,19 +68,21 @@ def timed(func: Callable[P, Awaitable[R]]) -> Callable[P, Awaitable[R]]: ...
 
 
 @overload
-def timed(*, log_level: str | None = "INFO") -> Callable[[Callable[P, R]], Callable[P, R]]: ...
+def timed(
+    *, log_level: str | None = "INFO"
+) -> Callable[[Callable[P, R]], Callable[P, R]]: ...
 
 
 @overload
 def timed(
-        *, log_level: str | None = "INFO"
+    *, log_level: str | None = "INFO"
 ) -> Callable[[Callable[P, Awaitable[R]]], Callable[P, Awaitable[R]]]: ...
 
 
 def timed(
-        func: Callable[P, Any] | None = None,
-        *,
-        log_level: str | None = "INFO",
+    func: Callable[P, Any] | None = None,
+    *,
+    log_level: str | None = "INFO",
 ) -> Any:
     """
     A decorator to measure and log the execution time of a function or method. It can
@@ -94,15 +100,15 @@ def timed(
     def decorator(wrapped_func: Callable[P, Any]) -> Callable[P, Any]:
         @wrapt.decorator
         def wrapper(
-                wrapped: Callable[P, Any],
+            wrapped: Callable[P, Any],
             instance: Any,
-                args: tuple[Any, ...],
-                kwargs: dict[str, Any],
+            args: tuple[Any, ...],
+            kwargs: dict[str, Any],
         ) -> Any:
             @contextlib.contextmanager
             def _execute() -> Generator[None, None, None]:
+                start_time = perf_counter()
                 try:
-                    start_time = perf_counter()
                     yield
                 finally:
                     elapsed = perf_counter() - start_time
@@ -112,6 +118,7 @@ def timed(
                         getattr(logger, log_level.lower())(log_msg)
 
             if inspect.iscoroutinefunction(wrapped):
+
                 async def _async_call() -> Any:
                     with _execute():
                         return await wrapped(*args, **kwargs)

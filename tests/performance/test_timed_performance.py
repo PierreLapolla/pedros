@@ -28,6 +28,7 @@ class TestDecoratorPerformance:
         result = benchmark(test_function)
         assert result == 42
 
+
 class TestProgbarPerformance:
     """Performance tests for progress bar."""
 

@@ -12,10 +12,10 @@ Backend = Literal["auto", "rich", "tqdm", "none"]
 
 
 def progbar(
-        iterable: Iterable[ItemType],
-        *args: Any,
-        backend: Backend | str = "auto",
-        **kwargs: Any,
+    iterable: Iterable[ItemType],
+    *args: Any,
+    backend: Backend | str = "auto",
+    **kwargs: Any,
 ) -> Iterable[ItemType]:
     """
     Displays a progress bar for the provided iterable, using a chosen backend library.
@@ -66,13 +66,17 @@ def progbar(
         if backend_lit == "rich":
             if rich_ok:
                 return "rich"
-            logger.warning("backend='rich' requested but 'rich' is not installed. Falling back.")
+            logger.warning(
+                "backend='rich' requested but 'rich' is not installed. Falling back."
+            )
             return "tqdm" if tqdm_ok else "none"
 
         if backend_lit == "tqdm":
             if tqdm_ok:
                 return "tqdm"
-            logger.warning("backend='tqdm' requested but 'tqdm' is not installed. Falling back.")
+            logger.warning(
+                "backend='tqdm' requested but 'tqdm' is not installed. Falling back."
+            )
             return "rich" if rich_ok else "none"
 
         if backend_lit == "auto":
@@ -81,7 +85,9 @@ def progbar(
             if tqdm_ok:
                 return "tqdm"
 
-        logger.warning("No progress bar library found. Install either 'rich' or 'tqdm'.")
+        logger.warning(
+            "No progress bar library found. Install either 'rich' or 'tqdm'."
+        )
         return "none"
 
     def _normalize_kwargs(for_backend: Backend) -> dict[str, Any]:

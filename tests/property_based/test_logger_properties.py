@@ -24,7 +24,13 @@ class TestLoggerPropertyBased:
     def test_setup_logging_any_level(self, log_level):
         """Test that setup_logging works with various log levels."""
         # Only test valid log levels
-        if log_level in [logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL]:
+        if log_level in [
+            logging.DEBUG,
+            logging.INFO,
+            logging.WARNING,
+            logging.ERROR,
+            logging.CRITICAL,
+        ]:
             setup_logging(log_level)
             logger = get_logger()
             assert logger.getEffectiveLevel() == log_level
@@ -44,22 +50,22 @@ class TestTimedPropertyBased:
     @given(test_value=integers(min_value=0, max_value=100))
     def test_timed_decorator_basic(self, test_value):
         """Test that timed decorator works with various return values."""
-        
+
         @timed
         def test_function():
             return test_value
-        
+
         result = test_function()
         assert result == test_value
 
     @given(function_name=text(min_size=1, max_size=20))
     def test_timed_decorator_with_different_functions(self, function_name):
         """Test that timed decorator works with various function implementations."""
-        
+
         @timed
         def test_function():
             return f"processed_{function_name}"
-        
+
         result = test_function()
         assert result == f"processed_{function_name}"
 
@@ -71,23 +77,23 @@ class TestProgbarPropertyBased:
     def test_progbar_any_iterable_size(self, iterable_size):
         """Test that progbar works with various iterable sizes."""
         items = list(range(iterable_size))
-        
+
         # Test that progbar doesn't break with any size
         result = []
         for item in progbar(items):
             result.append(item)
-        
+
         assert result == items
 
     @given(desc_text=text(min_size=0, max_size=50))
     def test_progbar_any_description(self, desc_text):
         """Test that progbar works with various descriptions."""
         items = [1, 2, 3]
-        
+
         result = []
         for item in progbar(items, desc=desc_text):
             result.append(item)
-        
+
         assert result == items
 
 
@@ -106,10 +112,10 @@ class TestEdgeCases:
 
     def test_timed_basic_functionality(self):
         """Test timed decorator basic functionality."""
-        
+
         @timed
         def test_function():
             return "immediate"
-        
+
         result = test_function()
         assert result == "immediate"

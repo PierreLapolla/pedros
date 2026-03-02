@@ -10,8 +10,8 @@ def test_format_time():
     assert "100.00 µs" in _format_time(1e-4)
     assert "100.00 ms" in _format_time(0.1)
     assert "1.23 s" in _format_time(1.234)
-    assert "1:1.23 s" in _format_time(61.234)
-    assert "1:1:1.23 s" in _format_time(3661.234)
+    assert "00:01:01" in _format_time(61.234)
+    assert "01:01:01" in _format_time(3661.234)
 
 
 def test_timed_sync():
