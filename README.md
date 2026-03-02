@@ -1,6 +1,8 @@
 # Pedros
 
-[![PyPI](https://img.shields.io/pypi/v/pedros)](https://pypi.org/project/pedros/)  
+[![PyPI](https://img.shields.io/pypi/v/pedros)](https://pypi.org/project/pedros/)
+![Ruff](https://img.shields.io/badge/ruff-enabled-brightgreen)
+![License](https://img.shields.io/badge/license-MIT-green)
 
 A small package of reusable Python utilities for Python projects.
 
@@ -62,6 +64,11 @@ This project is licensed under the MIT [License](LICENSE).
 ## Contributing
 
 Contributions are welcome! Please open issues or pull requests on GitHub.
+Before submitting contributions via pull requests, make sure the pre-commit hooks are installed.
+Run them manually with:
+```bash
+uv run pre-commit run --all-files
+```
 
 ## Support
 

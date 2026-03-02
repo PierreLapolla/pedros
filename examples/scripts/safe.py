@@ -1,7 +1,7 @@
 import asyncio
 import logging
 
-from pedros import safe, setup_logging, get_logger
+from pedros import safe, get_logger, setup_logging
 
 # Configure logging to see the output from @safe
 setup_logging(level=logging.INFO)

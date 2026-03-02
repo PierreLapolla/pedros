@@ -63,7 +63,7 @@ def test_logger_hierarchy():
 def test_logger_level_inheritance():
     """Test that child loggers inherit parent levels."""
     setup_logging(logging.DEBUG)
-    parent_logger = get_logger("parent")
+    get_logger("parent")
     child_logger = get_logger("parent.child")
 
     # Child should inherit parent's effective level

@@ -2,7 +2,16 @@ from __future__ import annotations
 
 import contextlib
 import inspect
-from typing import Any, Awaitable, Callable, ParamSpec, TypeVar, overload, Generator, cast
+from typing import (
+    Any,
+    Awaitable,
+    Callable,
+    ParamSpec,
+    TypeVar,
+    overload,
+    Generator,
+    cast,
+)
 
 import wrapt
 
@@ -26,34 +35,34 @@ def safe(func: Callable[P, Awaitable[R]]) -> Callable[P, Awaitable[R]]: ...
 
 @overload
 def safe(
-        *,
-        catch: type[Exception] | tuple[type[Exception], ...] = Exception,
-        log_level: str | None = "ERROR",
-        re_raise: bool = True,
-        on_error: Callable[[Exception], Any] | None = None,
-        on_finally: Callable[[], Any] | None = None,
+    *,
+    catch: type[Exception] | tuple[type[Exception], ...] = Exception,
+    log_level: str | None = "ERROR",
+    re_raise: bool = True,
+    on_error: Callable[[Exception], Any] | None = None,
+    on_finally: Callable[[], Any] | None = None,
 ) -> Callable[[Callable[P, R]], Callable[P, R]]: ...
 
 
 @overload
 def safe(
-        *,
-        catch: type[Exception] | tuple[type[Exception], ...] = Exception,
-        log_level: str | None = "ERROR",
-        re_raise: bool = True,
-        on_error: Callable[[Exception], Any] | None = None,
-        on_finally: Callable[[], Any] | None = None,
+    *,
+    catch: type[Exception] | tuple[type[Exception], ...] = Exception,
+    log_level: str | None = "ERROR",
+    re_raise: bool = True,
+    on_error: Callable[[Exception], Any] | None = None,
+    on_finally: Callable[[], Any] | None = None,
 ) -> Callable[[Callable[P, Awaitable[R]]], Callable[P, Awaitable[R]]]: ...
 
 
 def safe(
-        func: Callable[P, Any] | None = None,
-        *,
-        catch: type[Exception] | tuple[type[Exception], ...] = Exception,
-        log_level: str | None = "ERROR",
-        re_raise: bool = True,
-        on_error: Callable[[Exception], Any] | None = None,
-        on_finally: Callable[[], Any] | None = None,
+    func: Callable[P, Any] | None = None,
+    *,
+    catch: type[Exception] | tuple[type[Exception], ...] = Exception,
+    log_level: str | None = "ERROR",
+    re_raise: bool = True,
+    on_error: Callable[[Exception], Any] | None = None,
+    on_finally: Callable[[], Any] | None = None,
 ) -> Any:
     """
     A decorator function for safely executing another function within a context
@@ -83,10 +92,10 @@ def safe(
     def decorator(wrapped_func: Callable[P, Any]) -> Callable[P, Any]:
         @wrapt.decorator
         def wrapper(
-                wrapped: Callable[P, Any],
+            wrapped: Callable[P, Any],
             instance: Any,
-                args: tuple[Any, ...],
-                kwargs: dict[str, Any],
+            args: tuple[Any, ...],
+            kwargs: dict[str, Any],
         ) -> Any:
             @contextlib.contextmanager
             def _execute() -> Generator[None, None, None]:
@@ -107,6 +116,7 @@ def safe(
                         on_finally()
 
             if inspect.iscoroutinefunction(wrapped):
+
                 async def _async_call() -> Any:
                     with _execute():
                         return await wrapped(*args, **kwargs)
