@@ -97,6 +97,16 @@ def test_timed_no_args():
     assert success.__name__ == "success"
 
 
+def test_timed_invalid_log_level():
+    with pytest.raises(ValueError, match="Invalid log level"):
+
+        @timed(log_level="INVALID")
+        def func():
+            return True
+
+        func()
+
+
 @pytest.mark.asyncio
 async def test_timed_async_no_args():
     @timed()

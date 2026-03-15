@@ -15,7 +15,7 @@ from typing import (
 
 import wrapt
 
-from pedros.logger import get_logger
+from pedros.logger import get_logger, normalize_log_level
 
 __all__ = ["safe"]
 
@@ -90,6 +90,8 @@ def safe(
     """
 
     def decorator(wrapped_func: Callable[P, Any]) -> Callable[P, Any]:
+        normalized_level = normalize_log_level(log_level)
+
         @wrapt.decorator
         def wrapper(
             wrapped: Callable[P, Any],
@@ -102,9 +104,9 @@ def safe(
                 try:
                     yield
                 except catch as e:
-                    if log_level and log_level.upper() != "NONE":
+                    if normalized_level is not None:
                         log_msg = f"Error in {wrapped.__name__}: {str(e)}"
-                        getattr(logger, log_level.lower())(log_msg, exc_info=True)
+                        logger.log(normalized_level, log_msg, exc_info=True)
 
                     if on_error:
                         on_error(e)

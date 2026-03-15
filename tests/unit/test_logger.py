@@ -1,4 +1,6 @@
 import logging
+import subprocess
+import sys
 
 from pedros.logger import get_logger, setup_logging
 
@@ -30,6 +32,21 @@ def test_setup_logging_custom_level():
     setup_logging(logging.DEBUG)
     logger = get_logger()
     assert logger.getEffectiveLevel() == logging.DEBUG
+
+
+def test_setup_logging_string_level():
+    setup_logging("WARNING")
+    logger = get_logger()
+    assert logger.getEffectiveLevel() == logging.WARNING
+
+
+def test_setup_logging_invalid_level():
+    try:
+        setup_logging("NOT_A_LEVEL")
+    except ValueError as exc:
+        assert "Invalid logging level" in str(exc)
+    else:
+        raise AssertionError("Expected ValueError for invalid logging level")
 
 
 def test_setup_logging_without_rich():
@@ -68,3 +85,23 @@ def test_logger_level_inheritance():
 
     # Child should inherit parent's effective level
     assert child_logger.getEffectiveLevel() == logging.DEBUG
+
+
+def test_importing_package_does_not_reconfigure_logging():
+    code = """
+import logging
+logging.basicConfig(level=logging.ERROR, force=True)
+before = logging.getLogger().getEffectiveLevel()
+import pedros
+after = logging.getLogger().getEffectiveLevel()
+print(before, after)
+"""
+    completed = subprocess.run(
+        [sys.executable, "-c", code],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    before, after = map(int, completed.stdout.strip().split())
+    assert before == logging.ERROR
+    assert after == logging.ERROR

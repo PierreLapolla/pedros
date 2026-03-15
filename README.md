@@ -26,6 +26,13 @@ OR
 uv add pedros
 ```
 
+Optional features:
+
+```bash
+pip install "pedros[rich]"   # Rich logging/progress backend
+pip install "pedros[all]"    # all optional backends
+```
+
 ## Quickstart
 
 ```python

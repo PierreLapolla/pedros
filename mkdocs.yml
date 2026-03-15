@@ -1,0 +1,39 @@
+site_name: pedros
+site_description: Reusable Python utilities for logging, decorators, and progress bars.
+repo_url: https://github.com/PierreLapolla/pedros
+repo_name: PierreLapolla/pedros
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - content.code.copy
+    - content.code.annotate
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            show_source: false
+            show_signature_annotations: true
+            separate_signature: true
+            docstring_style: sphinx
+
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+  - pymdownx.superfences
+  - pymdownx.highlight
+
+nav:
+  - Home: index.md
+  - API:
+    - Package: api/package.md
+    - Logging: api/logger.md
+    - Progress Bar: api/progbar.md
+    - Decorators: api/decorators.md

@@ -17,7 +17,7 @@ from typing import (
 
 import wrapt
 
-from pedros.logger import get_logger
+from pedros.logger import get_logger, normalize_log_level
 
 __all__ = ["timed"]
 
@@ -98,6 +98,8 @@ def timed(
     """
 
     def decorator(wrapped_func: Callable[P, Any]) -> Callable[P, Any]:
+        normalized_level = normalize_log_level(log_level)
+
         @wrapt.decorator
         def wrapper(
             wrapped: Callable[P, Any],
@@ -113,9 +115,9 @@ def timed(
                 finally:
                     elapsed = perf_counter() - start_time
 
-                    if log_level and log_level.upper() != "NONE":
+                    if normalized_level is not None:
                         log_msg = f"{wrapped.__name__} took {_format_time(elapsed)} to execute."
-                        getattr(logger, log_level.lower())(log_msg)
+                        logger.log(normalized_level, log_msg)
 
             if inspect.iscoroutinefunction(wrapped):
 

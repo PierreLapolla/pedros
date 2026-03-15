@@ -186,3 +186,13 @@ async def test_safe_async_no_args():
 
     assert await success() == "async ok"
     assert success.__name__ == "success"
+
+
+def test_safe_invalid_log_level():
+    with pytest.raises(ValueError, match="Invalid log level"):
+
+        @safe(log_level="INVALID", re_raise=False)
+        def fail():
+            raise ValueError("boom")
+
+        fail()

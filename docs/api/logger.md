@@ -1,0 +1,3 @@
+# Logging
+
+::: pedros.logger
