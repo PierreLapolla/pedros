@@ -38,16 +38,20 @@ pip install "pedros[all]"    # all optional backends
 ```python
 from pedros import setup_logging, get_logger, progbar, timed, safe
 
-# Configure logging
+# Configure logging for pedros
 setup_logging()
 logger = get_logger()
+
+# Or configure another package logger without touching root logging
+setup_logging(logger_name="my_package")
+logger = get_logger("my_package")
 
 # Use progress bar (auto-selects backend: rich > tqdm > basic)
 for item in progbar(range(10), desc="Processing"):
     pass
 
 # Time function execution
-@timed
+@timed(logger="my_package")
 def process_data():
     return "result"
 
@@ -56,7 +60,7 @@ process_data()  # Logs: "process_data took 1.23 ms to execute."
 
 
 # Safely handle errors
-@safe(re_raise=False)
+@safe(re_raise=False, logger="my_package")
 def risky_operation():
     raise ValueError("Something went wrong")
 

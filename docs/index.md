@@ -15,14 +15,17 @@ from pedros import setup_logging, get_logger, progbar, timed, safe
 setup_logging()
 logger = get_logger("demo")
 
+setup_logging(logger_name="my_package")
+package_logger = get_logger("my_package")
+
 for i in progbar(range(3), desc="Processing"):
     logger.info("step=%s", i)
 
-@timed
+@timed(logger="my_package")
 def work():
     return "ok"
 
-@safe(re_raise=False)
+@safe(re_raise=False, logger="my_package")
 def risky():
     raise ValueError("boom")
 ```

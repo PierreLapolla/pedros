@@ -1,4 +1,5 @@
 from time import sleep
+import logging
 
 import pytest
 
@@ -50,9 +51,47 @@ def test_timed_with_params(caplog):
     def func():
         return True
 
-    with caplog.at_level("DEBUG"):
+    with caplog.at_level("DEBUG", logger=__name__):
         assert func()
         assert "func took" in caplog.text
+
+
+def test_timed_uses_wrapped_function_module_logger_by_default(caplog):
+    @timed(log_level="DEBUG")
+    def func():
+        return True
+
+    with caplog.at_level("DEBUG", logger=__name__):
+        assert func()
+
+    assert "func took" in caplog.text
+    assert any(record.name == __name__ for record in caplog.records)
+
+
+def test_timed_accepts_custom_logger_name(caplog):
+    @timed(log_level="DEBUG", logger="custom.timed")
+    def func():
+        return True
+
+    with caplog.at_level("DEBUG", logger="custom.timed"):
+        assert func()
+
+    assert "func took" in caplog.text
+    assert any(record.name == "custom.timed" for record in caplog.records)
+
+
+def test_timed_accepts_custom_logger_object(caplog):
+    custom_logger = logging.getLogger("custom.timed.object")
+
+    @timed(log_level="DEBUG", logger=custom_logger)
+    def func():
+        return True
+
+    with caplog.at_level("DEBUG", logger="custom.timed.object"):
+        assert func()
+
+    assert "func took" in caplog.text
+    assert any(record.name == "custom.timed.object" for record in caplog.records)
 
 
 def test_timed_method():
