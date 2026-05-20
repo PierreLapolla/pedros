@@ -1,48 +1,134 @@
 from __future__ import annotations
 
 import logging
-from typing import Optional
+from collections.abc import Callable
+from typing import Any, Optional
 
 from pedros.has_dep import has_dep
 
-__all__ = ["setup_logging", "get_logger"]
+__all__ = ["setup_logging", "get_logger", "normalize_log_level"]
+
+_LOG_LEVEL_NAME_TO_VALUE: dict[str, int] = {
+    "CRITICAL": logging.CRITICAL,
+    "ERROR": logging.ERROR,
+    "WARNING": logging.WARNING,
+    "INFO": logging.INFO,
+    "DEBUG": logging.DEBUG,
+    "NOTSET": logging.NOTSET,
+}
+
+_LIBRARY_LOGGER_NAME = "pedros"
+_SETUP_HANDLER_ATTR = "_pedros_setup_logging_handler"
+LoggerTarget = logging.Logger | str | None
 
 
-def setup_logging(level: int = logging.INFO) -> None:
+def normalize_log_level(log_level: str | None) -> int | None:
     """
-    Configure the application's logging behavior.
+    Normalize a textual log level to a numeric logging value.
 
-    This function attempts to use Rich's ``RichHandler`` for enhanced,
-    colorful, and trace-friendly logging. If Rich is not installed,
-    it silently falls back to Python's standard logging configuration.
-    See more about Rich (https://pypi.org/project/rich/).
-
-    :param level: Logging level to use. Defaults to ``logging.INFO``.
-    :type level: int
-    :return: None
+    :param log_level: A textual level (e.g., ``"INFO"``), ``"NONE"``, or ``None``.
+    :return: Numeric level, ``None`` for no logging, or ``None`` when disabled.
+    :raises ValueError: If the provided level is unknown.
     """
-    fmt = None
-    datefmt = None
-    handlers = []
+    if log_level is None:
+        return None
 
+    upper = log_level.strip().upper()
+    if upper == "NONE":
+        return None
+
+    level = _LOG_LEVEL_NAME_TO_VALUE.get(upper)
+    if level is None:
+        allowed = ", ".join((*_LOG_LEVEL_NAME_TO_VALUE.keys(), "NONE"))
+        raise ValueError(f"Invalid log level '{log_level}'. Allowed values: {allowed}.")
+    return level
+
+
+def _resolve_logger(
+    target: Callable[..., Any] | None, logger: LoggerTarget
+) -> logging.Logger:
+    if isinstance(logger, logging.Logger):
+        return logger
+    if isinstance(logger, str):
+        return get_logger(logger)
+    if target is not None:
+        return get_logger(target.__module__)
+    return get_logger()
+
+
+def _create_logging_handler() -> logging.Handler:
     if has_dep("rich"):
         from rich.logging import RichHandler
 
-        handler = RichHandler(rich_tracebacks=True)
-        handlers.append(handler)
+        handler: logging.Handler = RichHandler(rich_tracebacks=True)
     else:
-        fmt = "%(asctime)s | %(levelname)-8s | %(message)s"
-        datefmt = "%Y-%m-%d %H:%M:%S"
         handler = logging.StreamHandler()
-        handlers.append(handler)
+        handler.setFormatter(
+            logging.Formatter(
+                fmt="%(asctime)s | %(levelname)-8s | %(message)s",
+                datefmt="%Y-%m-%d %H:%M:%S",
+            )
+        )
 
-    logging.basicConfig(
-        level=level,
-        format=fmt,
-        datefmt=datefmt,
-        handlers=handlers,
-        force=True,
-    )
+    setattr(handler, _SETUP_HANDLER_ATTR, True)
+    return handler
+
+
+def _normalize_setup_level(level: int | str) -> int:
+    if isinstance(level, int):
+        return level
+    try:
+        normalized_level = normalize_log_level(level)
+    except ValueError as exc:
+        raise ValueError(f"Invalid logging level '{level}'.") from exc
+    if normalized_level is not None:
+        return normalized_level
+    raise ValueError(f"Invalid logging level '{level}'.")
+
+
+def setup_logging(
+    level: int | str = logging.INFO,
+    logger_name: str = _LIBRARY_LOGGER_NAME,
+    *,
+    add_handler: bool | None = None,
+    propagate: bool | None = None,
+) -> None:
+    """
+    Configure logging for one logger without reconfiguring root logging.
+
+    This function attempts to use Rich's ``RichHandler`` for enhanced,
+    colorful, and trace-friendly logging. If Rich is not installed,
+    it silently falls back to Python's standard logging handler.
+    See more about Rich (https://pypi.org/project/rich/).
+
+    :param level: Logging level to use as integer or string name. Defaults to ``logging.INFO``.
+    :param logger_name: Logger to configure. Defaults to the ``pedros`` package logger.
+    :param add_handler: Whether to attach a handler to ``logger_name``. By default,
+        a handler is added only when neither root nor the target logger has handlers.
+    :param propagate: Whether records should propagate to ancestor loggers. By default,
+        propagation is enabled only when root logging is the selected handler path.
+    :return: None
+    """
+    target_logger = logging.getLogger(logger_name)
+    normalized_level = _normalize_setup_level(level)
+    root_has_handlers = bool(logging.getLogger().handlers)
+
+    target_logger.handlers = [
+        handler
+        for handler in target_logger.handlers
+        if not getattr(handler, _SETUP_HANDLER_ATTR, False)
+    ]
+
+    if add_handler is None:
+        add_handler = not root_has_handlers and not target_logger.handlers
+    if propagate is None:
+        propagate = root_has_handlers and not add_handler and not target_logger.handlers
+
+    if add_handler:
+        target_logger.addHandler(_create_logging_handler())
+
+    target_logger.setLevel(normalized_level)
+    target_logger.propagate = propagate
 
 
 def get_logger(name: Optional[str] = None) -> logging.Logger:
@@ -52,7 +138,6 @@ def get_logger(name: Optional[str] = None) -> logging.Logger:
     If no name is provided, the module's ``__name__`` is used.
 
     :param name: Name of the logger. If ``None``, defaults to the current module.
-    :type name: str or None
     :return: A configured logger instance.
     """
     return logging.getLogger(name or __name__)

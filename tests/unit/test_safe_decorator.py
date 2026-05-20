@@ -37,6 +37,44 @@ def test_safe_sync_error_no_re_raise(caplog):
         assert "Error in fail: test error" in caplog.text
 
 
+def test_safe_uses_wrapped_function_module_logger_by_default(caplog):
+    @safe(re_raise=False)
+    def fail():
+        raise ValueError("module logger")
+
+    with caplog.at_level(logging.ERROR, logger=__name__):
+        fail()
+
+    assert "Error in fail: module logger" in caplog.text
+    assert any(record.name == __name__ for record in caplog.records)
+
+
+def test_safe_accepts_custom_logger_name(caplog):
+    @safe(re_raise=False, logger="custom.safe")
+    def fail():
+        raise ValueError("custom logger")
+
+    with caplog.at_level(logging.ERROR, logger="custom.safe"):
+        fail()
+
+    assert "Error in fail: custom logger" in caplog.text
+    assert any(record.name == "custom.safe" for record in caplog.records)
+
+
+def test_safe_accepts_custom_logger_object(caplog):
+    custom_logger = logging.getLogger("custom.safe.object")
+
+    @safe(re_raise=False, logger=custom_logger)
+    def fail():
+        raise ValueError("logger object")
+
+    with caplog.at_level(logging.ERROR, logger="custom.safe.object"):
+        fail()
+
+    assert "Error in fail: logger object" in caplog.text
+    assert any(record.name == "custom.safe.object" for record in caplog.records)
+
+
 def test_safe_callbacks():
     on_error = MagicMock()
     on_finally = MagicMock()
@@ -186,3 +224,13 @@ async def test_safe_async_no_args():
 
     assert await success() == "async ok"
     assert success.__name__ == "success"
+
+
+def test_safe_invalid_log_level():
+    with pytest.raises(ValueError, match="Invalid log level"):
+
+        @safe(log_level="INVALID", re_raise=False)
+        def fail():
+            raise ValueError("boom")
+
+        fail()

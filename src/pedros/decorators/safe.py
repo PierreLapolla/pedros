@@ -15,11 +15,9 @@ from typing import (
 
 import wrapt
 
-from pedros.logger import get_logger
+from pedros.logger import LoggerTarget, _resolve_logger, normalize_log_level
 
 __all__ = ["safe"]
-
-logger = get_logger()
 
 P = ParamSpec("P")
 R = TypeVar("R")
@@ -41,6 +39,7 @@ def safe(
     re_raise: bool = True,
     on_error: Callable[[Exception], Any] | None = None,
     on_finally: Callable[[], Any] | None = None,
+    logger: LoggerTarget = None,
 ) -> Callable[[Callable[P, R]], Callable[P, R]]: ...
 
 
@@ -52,6 +51,7 @@ def safe(
     re_raise: bool = True,
     on_error: Callable[[Exception], Any] | None = None,
     on_finally: Callable[[], Any] | None = None,
+    logger: LoggerTarget = None,
 ) -> Callable[[Callable[P, Awaitable[R]]], Callable[P, Awaitable[R]]]: ...
 
 
@@ -63,6 +63,7 @@ def safe(
     re_raise: bool = True,
     on_error: Callable[[Exception], Any] | None = None,
     on_finally: Callable[[], Any] | None = None,
+    logger: LoggerTarget = None,
 ) -> Any:
     """
     A decorator function for safely executing another function within a context
@@ -85,11 +86,15 @@ def safe(
     :param on_finally: An optional callable to be executed in a `finally` block after
         the function execution, regardless of whether an exception was raised or not.
         It does not accept any parameters. Defaults to None.
+    :param logger: Logger object or logger name to use. If omitted, logs are emitted
+        through the wrapped function's module logger.
     :return: If `func` is provided, it returns the decorated version of `func`. If
         `func` is None, it returns the decorator to be used with a target function.
     """
 
     def decorator(wrapped_func: Callable[P, Any]) -> Callable[P, Any]:
+        normalized_level = normalize_log_level(log_level)
+
         @wrapt.decorator
         def wrapper(
             wrapped: Callable[P, Any],
@@ -102,9 +107,11 @@ def safe(
                 try:
                     yield
                 except catch as e:
-                    if log_level and log_level.upper() != "NONE":
+                    if normalized_level is not None:
                         log_msg = f"Error in {wrapped.__name__}: {str(e)}"
-                        getattr(logger, log_level.lower())(log_msg, exc_info=True)
+                        _resolve_logger(wrapped, logger).log(
+                            normalized_level, log_msg, exc_info=True
+                        )
 
                     if on_error:
                         on_error(e)

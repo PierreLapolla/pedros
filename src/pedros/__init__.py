@@ -16,8 +16,6 @@ from pedros.has_dep import has_dep
 from pedros.logger import setup_logging, get_logger
 from pedros.progbar import progbar
 
-setup_logging()
-
 __all__ = [
     "has_dep",
     "setup_logging",
