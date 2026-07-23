@@ -1,38 +1,32 @@
+---
+icon: lucide/rocket
+---
+
 # pedros
 
-`pedros` is a compact utility package for:
+A small package of reusable Python utilities for Python projects.
 
-- dependency detection (`has_dep`),
-- logging setup (`setup_logging`, `get_logger`),
-- progress bars with fallback backends (`progbar`),
-- resilient decorators (`@timed`, `@safe`).
+## Features
 
-## Quickstart
+- **Dependency Management**: smart detection of optional dependencies ([`has_dep`](guide/has-dep.md))
+- **Logging**: simplified logging setup with optional Rich support ([logging guide](guide/logging.md))
+- **Progress Bars**: unified progress bar API with multiple backends ([progress bars guide](guide/progress-bars.md))
+- **Decorators**: robust decorators for timing and error handling ([decorators section](guide/decorators/index.md))
+- **Type Safe**: comprehensive type hints and PEP 561 compliance
 
-```python
-from pedros import setup_logging, get_logger, progbar, timed, safe
-
-setup_logging()
-logger = get_logger("demo")
-
-setup_logging(logger_name="my_package")
-package_logger = get_logger("my_package")
-
-for i in progbar(range(3), desc="Processing"):
-    logger.info("step=%s", i)
-
-@timed(logger="my_package")
-def work():
-    return "ok"
-
-@safe(re_raise=False, logger="my_package")
-def risky():
-    raise ValueError("boom")
-```
-
-## Build Docs
+## Installation
 
 ```bash
-uv sync --group docs
-uv run mkdocs build --strict
+pip install pedros
 ```
+
+or
+
+```bash
+uv add pedros
+```
+
+`rich` and `tqdm` are optional and auto-detected at runtime — install either
+yourself to get the enhanced logging/progress-bar backend.
+
+See the guide pages in the sidebar for usage examples of every feature.

@@ -1,8 +1,6 @@
 # Pedros
 
 [![PyPI](https://img.shields.io/pypi/v/pedros)](https://pypi.org/project/pedros/)
-![Ruff](https://img.shields.io/badge/ruff-enabled-brightgreen)
-![License](https://img.shields.io/badge/license-MIT-green)
 
 A small package of reusable Python utilities for Python projects.
 
@@ -26,47 +24,13 @@ OR
 uv add pedros
 ```
 
-Optional features:
+`rich` and `tqdm` are optional and auto-detected at runtime — install either
+yourself to get the enhanced logging/progress-bar backend.
 
-```bash
-pip install "pedros[rich]"   # Rich logging/progress backend
-pip install "pedros[all]"    # all optional backends
-```
+## Documentation
 
-## Quickstart
-
-```python
-from pedros import setup_logging, get_logger, progbar, timed, safe
-
-# Configure logging for pedros
-setup_logging()
-logger = get_logger()
-
-# Or configure another package logger without touching root logging
-setup_logging(logger_name="my_package")
-logger = get_logger("my_package")
-
-# Use progress bar (auto-selects backend: rich > tqdm > basic)
-for item in progbar(range(10), desc="Processing"):
-    pass
-
-# Time function execution
-@timed(logger="my_package")
-def process_data():
-    return "result"
-
-
-process_data()  # Logs: "process_data took 1.23 ms to execute."
-
-
-# Safely handle errors
-@safe(re_raise=False, logger="my_package")
-def risky_operation():
-    raise ValueError("Something went wrong")
-
-
-risky_operation()  # Logs the error but doesn't crash
-```
+Full usage guide, one page per feature, with examples:
+[pierrelapolla.github.io/pedros](https://pierrelapolla.github.io/pedros/)
 
 ## License
 
@@ -74,9 +38,29 @@ This project is licensed under the MIT [License](LICENSE).
 
 ## Contributing
 
-Contributions are welcome! Please open issues or pull requests on GitHub.
-Before submitting contributions via pull requests, make sure the pre-commit hooks are installed.
-Run them manually with:
+Contributions are welcome! To set up a dev environment:
+
+1. Install [uv](https://docs.astral.sh/uv/getting-started/installation/).
+2. Clone the repo and install dependencies:
+   ```bash
+   git clone https://github.com/pierrelapolla/pedros.git
+   cd pedros
+   uv sync --group dev --group docs
+   ```
+3. Install the pre-commit hooks:
+   ```bash
+   uv run pre-commit install
+   ```
+4. Run the test suite:
+   ```bash
+   uv run pytest
+   ```
+5. Preview the docs locally:
+   ```bash
+   uv run --group docs zensical serve
+   ```
+
+Before opening a pull request, run the hooks against the full tree:
 ```bash
 uv run pre-commit run --all-files
 ```

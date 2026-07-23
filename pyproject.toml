@@ -1,6 +1,6 @@
 [project]
 name = "pedros"
-version = "0.13.0"
+version = "0.13.1"
 description = "Small utility package for my projects."
 readme = "README.md"
 license = {file = "LICENSE"}
@@ -27,18 +27,10 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/pierrelapolla/pedros"
+Homepage = "https://pypi.org/project/pedros/"
 Repository = "https://github.com/pierrelapolla/pedros"
 Issues = "https://github.com/pierrelapolla/pedros/issues"
-Documentation = "https://github.com/pierrelapolla/pedros#readme"
-
-[project.optional-dependencies]
-rich = [
-    "rich>=14.3.3",
-]
-all = [
-    "rich>=14.3.3",
-]
+Documentation = "https://pierrelapolla.github.io/pedros/"
 
 [build-system]
 requires = ["hatchling"]
@@ -56,9 +48,7 @@ dev = [
     "tqdm>=4.67.3",
 ]
 docs = [
-    "mkdocs>=1.6.1",
-    "mkdocs-material>=9.6.20",
-    "mkdocstrings[python]>=0.30.0",
+    "zensical>=0.0.51",
 ]
 
 [tool.pytest.ini_options]
