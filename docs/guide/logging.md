@@ -32,7 +32,7 @@ setup_logging(level="DEBUG")
 ```
 
 If `rich` is not installed, `setup_logging` silently falls back to a
-timestamped, plain-text formatter — no code changes needed.
+timestamped, plain-text formatter, no code changes needed.
 
 ## Configuring another logger
 
@@ -43,6 +43,36 @@ affecting root logging or other loggers:
 ```python
 setup_logging(logger_name="my_package")
 logger = get_logger("my_package")
+```
+
+## pedros's own logging
+
+`@timed`, `@safe`, and `progbar` all log through the `pedros` logger, the
+same one `setup_logging`/`get_logger` target by default. This needs zero
+setup: the first time any of them logs anything, `pedros` auto-configures
+itself with the same defaults `setup_logging()` would use, so you get
+formatted output out of the box.
+
+This logger is deliberately kept separate from your own application logger:
+configuring your own logger (or root logging) never affects `pedros`'s,
+and vice versa.
+
+If you want to see `pedros`'s own logs (e.g. what `@safe` caught) alongside
+yours, `pedros` is just a stable, ordinary logger name. Attach your own
+handler to it with the standard library, no pedros-specific API needed:
+
+```python
+import logging
+
+logging.getLogger("pedros").addHandler(your_handler)
+```
+
+To silence it instead:
+
+```python
+import logging
+
+logging.getLogger("pedros").disabled = True
 ```
 
 ## Handler and propagation control

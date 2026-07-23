@@ -37,42 +37,16 @@ def test_safe_sync_error_no_re_raise(caplog):
         assert "Error in fail: test error" in caplog.text
 
 
-def test_safe_uses_wrapped_function_module_logger_by_default(caplog):
+def test_safe_logs_through_pedros_logger(caplog):
     @safe(re_raise=False)
     def fail():
         raise ValueError("module logger")
 
-    with caplog.at_level(logging.ERROR, logger=__name__):
+    with caplog.at_level(logging.ERROR, logger="pedros"):
         fail()
 
     assert "Error in fail: module logger" in caplog.text
-    assert any(record.name == __name__ for record in caplog.records)
-
-
-def test_safe_accepts_custom_logger_name(caplog):
-    @safe(re_raise=False, logger="custom.safe")
-    def fail():
-        raise ValueError("custom logger")
-
-    with caplog.at_level(logging.ERROR, logger="custom.safe"):
-        fail()
-
-    assert "Error in fail: custom logger" in caplog.text
-    assert any(record.name == "custom.safe" for record in caplog.records)
-
-
-def test_safe_accepts_custom_logger_object(caplog):
-    custom_logger = logging.getLogger("custom.safe.object")
-
-    @safe(re_raise=False, logger=custom_logger)
-    def fail():
-        raise ValueError("logger object")
-
-    with caplog.at_level(logging.ERROR, logger="custom.safe.object"):
-        fail()
-
-    assert "Error in fail: logger object" in caplog.text
-    assert any(record.name == "custom.safe.object" for record in caplog.records)
+    assert any(record.name == "pedros" for record in caplog.records)
 
 
 def test_safe_callbacks():

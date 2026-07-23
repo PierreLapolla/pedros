@@ -4,7 +4,7 @@ icon: lucide/blocks
 
 # Universal decorator (template)
 
-`pedros.decorators.universal_decorator` is not part of the public API — it
+`pedros.decorators.universal_decorator` is not part of the public API: it
 isn't exported from `pedros` or from `pedros.decorators`. It exists as a
 **template** for writing new decorators that need the same shape as
 `@timed` and `@safe`: usable bare or configured, transparent on both sync
@@ -51,7 +51,7 @@ def universal_decorator(func: Callable[P, Any] | None = None) -> Any:
 ```
 
 The full file also carries `@overload` signatures for bare vs. configured,
-sync vs. async usage — see `src/pedros/decorators/universal_decorator.py`
+sync vs. async usage, see `src/pedros/decorators/universal_decorator.py`
 for those; they don't affect runtime behavior.
 
 ## The hook points
@@ -59,10 +59,10 @@ for those; they don't affect runtime behavior.
 Inside `_execute`, the numbered comments mark where your own decorator's
 behavior goes:
 
-1. **pre** — runs before the wrapped call
-2. **post (success)** — runs immediately after a successful call
-3. **error** — runs if the wrapped call raises; re-raises by default
-4. **finally** — always runs, success or failure
+1. **pre**: runs before the wrapped call
+2. **post (success)**: runs immediately after a successful call
+3. **error**: runs if the wrapped call raises; re-raises by default
+4. **finally**: always runs, success or failure
 
 `@timed` fills in *pre* (start a timer) and *finally* (log the elapsed
 time). `@safe` fills in *error* (log, invoke `on_error`, decide whether to
@@ -76,6 +76,6 @@ re-raise) and *finally* (invoke `on_finally`).
    `on_error`, ... for the pattern).
 3. Fill in the hook(s) you need inside `_execute`.
 4. Leave the `inspect.iscoroutinefunction` branch and the
-   `decorator(func) if func is not None else decorator` return alone —
+   `decorator(func) if func is not None else decorator` return alone,
    that's what makes bare (`@my_decorator`) and configured
    (`@my_decorator(...)`) usage both work on sync and async functions.

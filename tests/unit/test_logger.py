@@ -26,7 +26,7 @@ def test_get_logger_default():
     """Test getting logger with default name."""
     logger = get_logger()
     assert isinstance(logger, logging.Logger)
-    assert logger.name == "pedros.logger"
+    assert logger.name == "pedros"
 
 
 def test_get_logger_custom_name():
@@ -61,7 +61,7 @@ def test_setup_logging_invalid_level():
     try:
         setup_logging("NOT_A_LEVEL")
     except ValueError as exc:
-        assert "Invalid logging level" in str(exc)
+        assert "Invalid log level" in str(exc)
     else:
         raise AssertionError("Expected ValueError for invalid logging level")
 
@@ -241,4 +241,34 @@ def test_setup_logging_does_not_duplicate_existing_target_handlers():
     finally:
         root_logger.handlers = original_root_handlers
         root_logger.setLevel(original_root_level)
+        restore()
+
+
+def test_get_logger_auto_configures_pedros_logger_on_first_use(monkeypatch):
+    import pedros.logger as logger_module
+
+    package_logger, restore = _reset_logger("pedros")
+    monkeypatch.setattr(logger_module, "_configured", False)
+
+    try:
+        logger = get_logger()
+
+        assert logger is package_logger
+        assert package_logger.level == logging.INFO
+    finally:
+        restore()
+
+
+def test_get_logger_does_not_reconfigure_once_already_configured(monkeypatch):
+    import pedros.logger as logger_module
+
+    package_logger, restore = _reset_logger("pedros")
+    monkeypatch.setattr(logger_module, "_configured", True)
+    package_logger.setLevel(logging.WARNING)
+
+    try:
+        get_logger()
+
+        assert package_logger.level == logging.WARNING
+    finally:
         restore()

@@ -1,0 +1,25 @@
+# pedros
+
+> A small package of reusable Python utilities: zero-setup logging, a
+> multi-backend progress bar, and sync/async-safe decorators for timing and
+> error handling.
+
+Python >=3.10,<3.16. Install with `pip install pedros` or `uv add pedros`.
+`rich` and `tqdm` are optional, auto-detected at runtime for enhanced
+logging/progress-bar backends.
+
+## Docs
+
+- [Get Started](https://pierrelapolla.github.io/pedros/): features overview, installation
+- [Logging](https://pierrelapolla.github.io/pedros/guide/logging/): `setup_logging`, `get_logger`, pedros's own zero-setup logger
+- [Progress Bars](https://pierrelapolla.github.io/pedros/guide/progress-bars/): `progbar`, backend selection (rich/tqdm/auto/none)
+- [Decorators overview](https://pierrelapolla.github.io/pedros/guide/decorators/): `@timed` and `@safe`
+- [@timed](https://pierrelapolla.github.io/pedros/guide/decorators/timed/): log function execution time
+- [@safe](https://pierrelapolla.github.io/pedros/guide/decorators/safe/): catch/log/re-raise exceptions, callbacks
+- [Universal Decorator (template)](https://pierrelapolla.github.io/pedros/guide/decorators/universal-decorator/): sync/async-safe skeleton for building new decorators
+- [Dependency Checks](https://pierrelapolla.github.io/pedros/guide/has-dep/): `has_dep`, optional-dependency detection
+
+## Optional
+
+- [GitHub repository](https://github.com/pierrelapolla/pedros): source, issues, contributing
+- [PyPI package](https://pypi.org/project/pedros/): releases
