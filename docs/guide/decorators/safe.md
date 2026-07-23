@@ -30,7 +30,10 @@ risky_operation()  # Logs the error (ERROR level) but doesn't crash
 - `re_raise`: re-raise the exception after handling it (default: `True`)
 - `on_error`: callback invoked with the caught exception
 - `on_finally`: callback invoked in a `finally` block, regardless of outcome
-- `logger`: logger instance or name to log through
+
+`@safe` always logs through the `pedros` logger — see the
+[logging guide](../logging.md#pedross-own-logging) for how to view or
+silence it.
 
 ```python
 def handle_error(e):

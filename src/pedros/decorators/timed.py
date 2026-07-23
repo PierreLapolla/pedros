@@ -17,7 +17,7 @@ from typing import (
 
 import wrapt
 
-from pedros.logger import LoggerTarget, _resolve_logger, normalize_log_level
+from pedros.logger import get_logger, normalize_log_level
 
 __all__ = ["timed"]
 
@@ -67,13 +67,13 @@ def timed(func: Callable[P, Awaitable[R]]) -> Callable[P, Awaitable[R]]: ...
 
 @overload
 def timed(
-    *, log_level: str | None = "INFO", logger: LoggerTarget = None
+    *, log_level: str | None = "INFO"
 ) -> Callable[[Callable[P, R]], Callable[P, R]]: ...
 
 
 @overload
 def timed(
-    *, log_level: str | None = "INFO", logger: LoggerTarget = None
+    *, log_level: str | None = "INFO"
 ) -> Callable[[Callable[P, Awaitable[R]]], Callable[P, Awaitable[R]]]: ...
 
 
@@ -81,7 +81,6 @@ def timed(
     func: Callable[P, Any] | None = None,
     *,
     log_level: str | None = "INFO",
-    logger: LoggerTarget = None,
 ) -> Any:
     """
     A decorator to measure and log the execution time of a function or method. It can
@@ -92,8 +91,6 @@ def timed(
         with additional configuration through keyword arguments.
     :param log_level: The logging level to use for reporting execution time. Defaults to
         "INFO". If set to "NONE" (case insensitive), no logging will occur.
-    :param logger: Logger object or logger name to use. If omitted, logs are emitted
-        through the wrapped function's module logger.
     :return: A decorated function or an asynchronous coroutine that logs its execution
         time.
     """
@@ -118,7 +115,7 @@ def timed(
 
                     if normalized_level is not None:
                         log_msg = f"{wrapped.__name__} took {_format_time(elapsed)} to execute."
-                        _resolve_logger(wrapped, logger).log(normalized_level, log_msg)
+                        get_logger().log(normalized_level, log_msg)
 
             if inspect.iscoroutinefunction(wrapped):
 

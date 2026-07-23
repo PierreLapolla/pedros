@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 import logging
-from collections.abc import Callable
-from typing import Any, Optional
+from typing import Optional
 
 from pedros.has_dep import has_dep
 
@@ -19,7 +18,7 @@ _LOG_LEVEL_NAME_TO_VALUE: dict[str, int] = {
 
 _LIBRARY_LOGGER_NAME = "pedros"
 _SETUP_HANDLER_ATTR = "_pedros_setup_logging_handler"
-LoggerTarget = logging.Logger | str | None
+_configured = False
 
 
 def normalize_log_level(log_level: str | None) -> int | None:
@@ -42,18 +41,6 @@ def normalize_log_level(log_level: str | None) -> int | None:
         allowed = ", ".join((*_LOG_LEVEL_NAME_TO_VALUE.keys(), "NONE"))
         raise ValueError(f"Invalid log level '{log_level}'. Allowed values: {allowed}.")
     return level
-
-
-def _resolve_logger(
-    target: Callable[..., Any] | None, logger: LoggerTarget
-) -> logging.Logger:
-    if isinstance(logger, logging.Logger):
-        return logger
-    if isinstance(logger, str):
-        return get_logger(logger)
-    if target is not None:
-        return get_logger(target.__module__)
-    return get_logger()
 
 
 def _create_logging_handler() -> logging.Handler:
@@ -109,6 +96,8 @@ def setup_logging(
         propagation is enabled only when root logging is the selected handler path.
     :return: None
     """
+    global _configured
+
     target_logger = logging.getLogger(logger_name)
     normalized_level = _normalize_setup_level(level)
     root_has_handlers = bool(logging.getLogger().handlers)
@@ -129,15 +118,21 @@ def setup_logging(
 
     target_logger.setLevel(normalized_level)
     target_logger.propagate = propagate
+    _configured = True
 
 
 def get_logger(name: Optional[str] = None) -> logging.Logger:
     """
     Return a logger instance.
 
-    If no name is provided, the module's ``__name__`` is used.
+    If no name is provided, the ``pedros`` package logger is returned, and it is
+    auto-configured with :func:`setup_logging` defaults on first use if nothing
+    has configured it yet. This is what powers ``pedros``'s own decorators and
+    utilities without requiring any setup.
 
-    :param name: Name of the logger. If ``None``, defaults to the current module.
+    :param name: Name of the logger. If ``None``, defaults to the ``pedros`` logger.
     :return: A configured logger instance.
     """
-    return logging.getLogger(name or __name__)
+    if name is None and not _configured:
+        setup_logging()
+    return logging.getLogger(name or _LIBRARY_LOGGER_NAME)
