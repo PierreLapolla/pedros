@@ -8,10 +8,12 @@ Public API:
 - progbar: Progress bar for iterables with multiple backend support
 - timed: Decorator to measure execution time
 - safe: Decorator to encapsulate a function in a try-except block
+- trace: Decorator to log a function's arguments, return value, or raised exception
 """
 
 from pedros.decorators.safe import safe
 from pedros.decorators.timed import timed
+from pedros.decorators.trace import trace
 from pedros.has_dep import has_dep
 from pedros.logger import setup_logging, get_logger
 from pedros.progbar import progbar
@@ -23,4 +25,5 @@ __all__ = [
     "progbar",
     "timed",
     "safe",
+    "trace",
 ]

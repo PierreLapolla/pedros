@@ -7,9 +7,10 @@ icon: lucide/blocks
 `pedros.decorators.universal_decorator` is not part of the public API: it
 isn't exported from `pedros` or from `pedros.decorators`. It exists as a
 **template** for writing new decorators that need the same shape as
-`@timed` and `@safe`: usable bare or configured, transparent on both sync
-and async functions, built on [`wrapt`](https://pypi.org/project/wrapt/) so
-the wrapped function's signature is preserved.
+`@timed`, `@safe`, and `@trace`: usable bare or configured, transparent on
+both sync and async functions, built on
+[`wrapt`](https://pypi.org/project/wrapt/) so the wrapped function's
+signature is preserved.
 
 ```python title="src/pedros/decorators/universal_decorator.py"
 def universal_decorator(func: Callable[P, Any] | None = None) -> Any:
@@ -66,7 +67,9 @@ behavior goes:
 
 `@timed` fills in *pre* (start a timer) and *finally* (log the elapsed
 time). `@safe` fills in *error* (log, invoke `on_error`, decide whether to
-re-raise) and *finally* (invoke `on_finally`).
+re-raise) and *finally* (invoke `on_finally`). `@trace` fills in *pre* (log
+the call), *post* (log the return value), and *error* (log the exception,
+always re-raising).
 
 ## Building your own decorator from it
 

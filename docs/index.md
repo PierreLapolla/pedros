@@ -11,7 +11,7 @@ A small package of reusable Python utilities for Python projects.
 - **Dependency Management**: smart detection of optional dependencies ([`has_dep`](guide/has-dep.md))
 - **Logging**: simplified logging setup with optional Rich support ([logging guide](guide/logging.md))
 - **Progress Bars**: unified progress bar API with multiple backends ([progress bars guide](guide/progress-bars.md))
-- **Decorators**: robust decorators for timing and error handling ([decorators section](guide/decorators/index.md))
+- **Decorators**: robust decorators for timing, error handling, and call tracing ([decorators section](guide/decorators/index.md))
 - **Type Safe**: comprehensive type hints and PEP 561 compliance
 
 ## Installation

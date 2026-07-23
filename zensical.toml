@@ -54,6 +54,7 @@ nav = [
       { "Overview" = "guide/decorators/index.md" },
       { "timed" = "guide/decorators/timed.md" },
       { "safe" = "guide/decorators/safe.md" },
+      { "trace" = "guide/decorators/trace.md" },
       { "Universal Decorator (template)" = "guide/decorators/universal-decorator.md" },
     ] },
   { "Dependency Checks" = "guide/has-dep.md" },

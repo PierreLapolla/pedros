@@ -1,6 +1,6 @@
 [project]
 name = "pedros"
-version = "0.14.0"
+version = "0.15.0"
 description = "Small utility package for my projects."
 readme = "README.md"
 license = {file = "LICENSE"}
