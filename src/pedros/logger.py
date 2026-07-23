@@ -21,16 +21,20 @@ _SETUP_HANDLER_ATTR = "_pedros_setup_logging_handler"
 _configured = False
 
 
-def normalize_log_level(log_level: str | None) -> int | None:
+def normalize_log_level(log_level: int | str | None) -> int | None:
     """
-    Normalize a textual log level to a numeric logging value.
+    Normalize a log level to a numeric logging value.
 
-    :param log_level: A textual level (e.g., ``"INFO"``), ``"NONE"``, or ``None``.
-    :return: Numeric level, ``None`` for no logging, or ``None`` when disabled.
+    :param log_level: A numeric level, a textual level (e.g., ``"INFO"``),
+        ``"NONE"``, or ``None``.
+    :return: Numeric level, or ``None`` for no logging / when disabled.
     :raises ValueError: If the provided level is unknown.
     """
     if log_level is None:
         return None
+
+    if isinstance(log_level, int):
+        return log_level
 
     upper = log_level.strip().upper()
     if upper == "NONE":
@@ -61,18 +65,6 @@ def _create_logging_handler() -> logging.Handler:
     return handler
 
 
-def _normalize_setup_level(level: int | str) -> int:
-    if isinstance(level, int):
-        return level
-    try:
-        normalized_level = normalize_log_level(level)
-    except ValueError as exc:
-        raise ValueError(f"Invalid logging level '{level}'.") from exc
-    if normalized_level is not None:
-        return normalized_level
-    raise ValueError(f"Invalid logging level '{level}'.")
-
-
 def setup_logging(
     level: int | str = logging.INFO,
     logger_name: str = _LIBRARY_LOGGER_NAME,
@@ -99,7 +91,12 @@ def setup_logging(
     global _configured
 
     target_logger = logging.getLogger(logger_name)
-    normalized_level = _normalize_setup_level(level)
+    try:
+        normalized_level = normalize_log_level(level)
+    except ValueError as exc:
+        raise ValueError(f"Invalid logging level '{level}'.") from exc
+    if normalized_level is None:
+        raise ValueError(f"Invalid logging level '{level}'.")
     root_has_handlers = bool(logging.getLogger().handlers)
 
     target_logger.handlers = [
