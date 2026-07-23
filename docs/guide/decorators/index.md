@@ -9,10 +9,10 @@ pedros ships two ready-to-use decorators, both built on
 work transparently on sync and async functions, used bare (`@timed`) or
 configured (`@timed(...)`):
 
-- [`@timed`](timed.md) — logs how long a function took to run
-- [`@safe`](safe.md) — wraps a function in a try/except, with logging,
+- [`@timed`](timed.md): logs how long a function took to run
+- [`@safe`](safe.md): wraps a function in a try/except, with logging,
   callbacks, and optional re-raising
 
 If you need a decorator with the same sync/async-safe shape but different
-behavior, start from [the universal decorator](universal-decorator.md) — it's
+behavior, start from [the universal decorator](universal-decorator.md), it's
 the annotated skeleton both `@timed` and `@safe` are built from.

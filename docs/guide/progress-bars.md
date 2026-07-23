@@ -41,7 +41,7 @@ and falls back to whichever backend is available (or none).
 ## Keyword arguments
 
 Extra `*args`/`**kwargs` are forwarded to the underlying backend. `desc` and
-`description` are interchangeable — `progbar` normalizes whichever one you
+`description` are interchangeable, `progbar` normalizes whichever one you
 pass to the name the chosen backend expects:
 
 ```python
@@ -51,7 +51,5 @@ progbar(range(10), description="Processing")  # works with rich
 
 ## Installing a backend
 
-```bash
-pip install "pedros[rich]"   # rich backend
-pip install "pedros[all]"    # all optional backends
-```
+`rich` and `tqdm` are optional and auto-detected at runtime, no extras to
+install: just `pip install rich` or `pip install tqdm` alongside pedros.

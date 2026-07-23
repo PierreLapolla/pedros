@@ -31,7 +31,7 @@ risky_operation()  # Logs the error (ERROR level) but doesn't crash
 - `on_error`: callback invoked with the caught exception
 - `on_finally`: callback invoked in a `finally` block, regardless of outcome
 
-`@safe` always logs through the `pedros` logger — see the
+`@safe` always logs through the `pedros` logger, see the
 [logging guide](../logging.md#pedross-own-logging) for how to view or
 silence it.
 

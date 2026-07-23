@@ -20,7 +20,7 @@ long_running_func(0.001)
 # Logs (INFO): "long_running_func took 1.23 ms to execute."
 ```
 
-The duration is formatted with an appropriate unit — nanoseconds,
+The duration is formatted with an appropriate unit: nanoseconds,
 microseconds, milliseconds, seconds, or `hh:mm:ss` for anything over a
 minute.
 
@@ -34,7 +34,7 @@ def process_data():
 
 Set `log_level="NONE"` to time silently without logging.
 
-`@timed` always logs through the `pedros` logger — see the
+`@timed` always logs through the `pedros` logger, see the
 [logging guide](../logging.md#pedross-own-logging) for how to view or
 silence it.
 

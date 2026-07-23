@@ -26,7 +26,7 @@ or
 uv add pedros
 ```
 
-`rich` and `tqdm` are optional and auto-detected at runtime — install either
+`rich` and `tqdm` are optional and auto-detected at runtime. Install either
 yourself to get the enhanced logging/progress-bar backend.
 
 See the guide pages in the sidebar for usage examples of every feature.
