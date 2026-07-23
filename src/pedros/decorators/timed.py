@@ -67,20 +67,20 @@ def timed(func: Callable[P, Awaitable[R]]) -> Callable[P, Awaitable[R]]: ...
 
 @overload
 def timed(
-    *, log_level: str | None = "INFO"
+    *, log_level: str | None = "DEBUG"
 ) -> Callable[[Callable[P, R]], Callable[P, R]]: ...
 
 
 @overload
 def timed(
-    *, log_level: str | None = "INFO"
+    *, log_level: str | None = "DEBUG"
 ) -> Callable[[Callable[P, Awaitable[R]]], Callable[P, Awaitable[R]]]: ...
 
 
 def timed(
     func: Callable[P, Any] | None = None,
     *,
-    log_level: str | None = "INFO",
+    log_level: str | None = "DEBUG",
 ) -> Any:
     """
     A decorator to measure and log the execution time of a function or method. It can
@@ -90,7 +90,7 @@ def timed(
     :param func: The function to be decorated. If not provided, the decorator can be used
         with additional configuration through keyword arguments.
     :param log_level: The logging level to use for reporting execution time. Defaults to
-        "INFO". If set to "NONE" (case insensitive), no logging will occur.
+        "DEBUG". If set to "NONE" (case insensitive), no logging will occur.
     :return: A decorated function or an asynchronous coroutine that logs its execution
         time.
     """
