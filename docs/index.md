@@ -2,172 +2,70 @@
 icon: lucide/rocket
 ---
 
-# Get started
+# pedros
 
-For full documentation visit [zensical.org](https://zensical.org/docs/).
+A small package of reusable Python utilities for Python projects.
 
-## Commands
+## Features
 
-* [`zensical new`][new] - Create a new project
-* [`zensical serve`][serve] - Start local web server
-* [`zensical build`][build] - Build your site
+- **Dependency Management**: smart detection of optional dependencies ([`has_dep`](guide/has-dep.md))
+- **Logging**: simplified logging setup with optional Rich support ([logging guide](guide/logging.md))
+- **Progress Bars**: unified progress bar API with multiple backends ([progress bars guide](guide/progress-bars.md))
+- **Decorators**: robust decorators for timing and error handling ([decorators guide](guide/decorators.md))
+- **Type Safe**: comprehensive type hints and PEP 561 compliance
 
-  [new]: https://zensical.org/docs/usage/new/
-  [serve]: https://zensical.org/docs/usage/preview/
-  [build]: https://zensical.org/docs/usage/build/
+## Installation
 
-## Examples
-
-### Admonitions
-
-> Go to [documentation](https://zensical.org/docs/authoring/admonitions/)
-
-!!! note
-
-    This is a **note** admonition. Use it to provide helpful information.
-
-!!! warning
-
-    This is a **warning** admonition. Be careful!
-
-### Details
-
-> Go to [documentation](https://zensical.org/docs/authoring/admonitions/#collapsible-blocks)
-
-??? info "Click to expand for more info"
-
-    This content is hidden until you click to expand it.
-    Great for FAQs or long explanations.
-
-## Code Blocks
-
-> Go to [documentation](https://zensical.org/docs/authoring/code-blocks/)
-
-``` python hl_lines="2" title="Code blocks"
-def greet(name):
-    print(f"Hello, {name}!") # (1)!
-
-greet("Python")
+```bash
+pip install pedros
 ```
 
-1.  > Go to [documentation](https://zensical.org/docs/authoring/code-blocks/#code-annotations)
+or
 
-    Code annotations allow to attach notes to lines of code.
-
-Code can also be highlighted inline: `#!python print("Hello, Python!")`.
-
-## Content tabs
-
-> Go to [documentation](https://zensical.org/docs/authoring/content-tabs/)
-
-=== "Python"
-
-    ``` python
-    print("Hello from Python!")
-    ```
-
-=== "Rust"
-
-    ``` rs
-    println!("Hello from Rust!");
-    ```
-
-## Diagrams
-
-> Go to [documentation](https://zensical.org/docs/authoring/diagrams/)
-
-``` mermaid
-graph LR
-  A[Start] --> B{Error?};
-  B -->|Yes| C[Hmm...];
-  C --> D[Debug];
-  D --> B;
-  B ---->|No| E[Yay!];
+```bash
+uv add pedros
 ```
 
-## Footnotes
+Optional backends:
 
-> Go to [documentation](https://zensical.org/docs/authoring/footnotes/)
+```bash
+pip install "pedros[rich]"   # Rich logging/progress backend
+pip install "pedros[all]"    # all optional backends
+```
 
-Here's a sentence with a footnote.[^1]
+## Quickstart
 
-Hover it, to see a tooltip.
+```python
+from pedros import setup_logging, get_logger, progbar, timed, safe
 
-[^1]: This is the footnote.
+# Configure logging for pedros
+setup_logging()
+logger = get_logger()
+
+# Or configure another package logger without touching root logging
+setup_logging(logger_name="my_package")
+logger = get_logger("my_package")
+
+# Use progress bar (auto-selects backend: rich > tqdm > basic)
+for item in progbar(range(10), desc="Processing"):
+    pass
+
+# Time function execution
+@timed(logger="my_package")
+def process_data():
+    return "result"
 
 
-## Formatting
+process_data()  # Logs: "process_data took 1.23 ms to execute."
 
-> Go to [documentation](https://zensical.org/docs/authoring/formatting/)
 
-- ==This was marked (highlight)==
-- ^^This was inserted (underline)^^
-- ~~This was deleted (strikethrough)~~
-- H~2~O
-- A^T^A
-- ++ctrl+alt+del++
+# Safely handle errors
+@safe(re_raise=False, logger="my_package")
+def risky_operation():
+    raise ValueError("Something went wrong")
 
-## Icons, Emojis
 
-> Go to [documentation](https://zensical.org/docs/authoring/icons-emojis/)
+risky_operation()  # Logs the error but doesn't crash
+```
 
-* :sparkles: `:sparkles:`
-* :rocket: `:rocket:`
-* :tada: `:tada:`
-* :memo: `:memo:`
-* :eyes: `:eyes:`
-
-## Maths
-
-> Go to [documentation](https://zensical.org/docs/authoring/math/)
-
-$$
-\cos x=\sum_{k=0}^{\infty}\frac{(-1)^k}{(2k)!}x^{2k}
-$$
-
-!!! warning "Needs configuration"
-    Note that MathJax is included via a `script` tag on this page and is not
-    configured in the generated default configuration to avoid including it
-    in a pages that do not need it. See the documentation for details on how
-    to configure it on all your pages if they are more Maths-heavy than these
-    simple starter pages.
-
-<script id="MathJax-script" src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
-<script>
-  window.MathJax = {
-    tex: {
-      inlineMath: [["\\(", "\\)"]],
-      displayMath: [["\\[", "\\]"]],
-      processEscapes: true,
-      processEnvironments: true
-    },
-    options: {
-      ignoreHtmlClass: ".*|",
-      processHtmlClass: "arithmatex"
-    }
-  };
-
-  document$.subscribe(() => {
-    MathJax.startup.output.clearCache()
-    MathJax.typesetClear()
-    MathJax.texReset()
-    MathJax.typesetPromise()
-  })
-</script>
-
-## Task Lists
-
-> Go to [documentation](https://zensical.org/docs/authoring/lists/#using-task-lists)
-
-* [x] Install Zensical
-* [x] Configure `zensical.toml`
-* [x] Write amazing documentation
-* [ ] Deploy anywhere
-
-## Tooltips
-
-> Go to [documentation](https://zensical.org/docs/authoring/tooltips/)
-
-[Hover me][example]
-
-  [example]: https://example.com "I'm a tooltip!"
+See the guide pages in the sidebar for details and more examples on every feature.

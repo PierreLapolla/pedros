@@ -27,10 +27,10 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/pierrelapolla/pedros"
+Homepage = "https://pypi.org/project/pedros/"
 Repository = "https://github.com/pierrelapolla/pedros"
 Issues = "https://github.com/pierrelapolla/pedros/issues"
-Documentation = "https://github.com/pierrelapolla/pedros#readme"
+Documentation = "https://pierrelapolla.github.io/pedros/"
 
 [project.optional-dependencies]
 rich = [
@@ -56,9 +56,7 @@ dev = [
     "tqdm>=4.67.3",
 ]
 docs = [
-    "mkdocs>=1.6.1",
-    "mkdocs-material>=9.6.20",
-    "mkdocstrings[python]>=0.30.0",
+    "zensical>=0.0.51",
 ]
 
 [tool.pytest.ini_options]
