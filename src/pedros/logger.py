@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-from typing import Optional
 
 from pedros.has_dep import has_dep
 
@@ -116,7 +115,7 @@ def setup_logging(
     _configured = True
 
 
-def get_logger(name: Optional[str] = None) -> logging.Logger:
+def get_logger(name: str | None = None) -> logging.Logger:
     """
     Return a logger instance.
 
@@ -130,4 +129,5 @@ def get_logger(name: Optional[str] = None) -> logging.Logger:
     """
     if name is None and not _configured:
         setup_logging()
+
     return logging.getLogger(name or _LIBRARY_LOGGER_NAME)
