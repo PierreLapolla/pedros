@@ -368,14 +368,6 @@ dependencies = [
     { name = "wrapt" },
 ]
 
-[package.optional-dependencies]
-all = [
-    { name = "rich" },
-]
-rich = [
-    { name = "rich" },
-]
-
 [package.dev-dependencies]
 dev = [
     { name = "hypothesis" },
@@ -392,12 +384,7 @@ docs = [
 ]
 
 [package.metadata]
-requires-dist = [
-    { name = "rich", marker = "extra == 'all'", specifier = ">=14.3.3" },
-    { name = "rich", marker = "extra == 'rich'", specifier = ">=14.3.3" },
-    { name = "wrapt", specifier = ">=2.1.1" },
-]
-provides-extras = ["rich", "all"]
+requires-dist = [{ name = "wrapt", specifier = ">=2.1.1" }]
 
 [package.metadata.requires-dev]
 dev = [

@@ -1,45 +1,8 @@
 ---
-icon: lucide/timer
+icon: lucide/shield-alert
 ---
 
-# Decorators
-
-Both `@timed` and `@safe` work on sync and async functions transparently, and
-can be used bare (`@timed`) or configured (`@timed(...)`).
-
-## `@timed`
-
-Logs how long a function took to run.
-
-```python
-import time
-from pedros import timed
-
-
-@timed
-def long_running_func(sleep_time: float):
-    time.sleep(sleep_time)
-
-
-long_running_func(0.001)
-# Logs (INFO): "long_running_func took 1.23 ms to execute."
-```
-
-The duration is formatted with an appropriate unit — nanoseconds,
-microseconds, milliseconds, seconds, or `hh:mm:ss` for anything over a
-minute.
-
-Configure the log level or target a specific logger:
-
-```python
-@timed(log_level="DEBUG", logger="my_package")
-def process_data():
-    return "result"
-```
-
-Set `log_level="NONE"` to time silently without logging.
-
-## `@safe`
+# `@safe`
 
 Wraps a function in a try/except, with logging, error callbacks, and
 optional re-raising.
@@ -59,7 +22,7 @@ def risky_operation():
 risky_operation()  # Logs the error (ERROR level) but doesn't crash
 ```
 
-### Options
+## Options
 
 - `catch`: exception type or tuple of types to catch (default: `Exception`)
 - `log_level`: level used when logging a caught exception, or `"NONE"` to
@@ -83,7 +46,7 @@ def specific_fail():
     raise KeyError("Missing key!")
 ```
 
-### Async functions
+## Async functions
 
 ```python
 import asyncio
@@ -97,5 +60,3 @@ async def async_fail():
 
 asyncio.run(async_fail())
 ```
-
-`@timed` supports the same async usage.

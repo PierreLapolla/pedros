@@ -50,7 +50,12 @@ nav = [
   { "Get Started" = "index.md" },
   { "Logging" = "guide/logging.md" },
   { "Progress Bars" = "guide/progress-bars.md" },
-  { "Decorators" = "guide/decorators.md" },
+  { "Decorators" = [
+      { "Overview" = "guide/decorators/index.md" },
+      { "timed" = "guide/decorators/timed.md" },
+      { "safe" = "guide/decorators/safe.md" },
+      { "Universal Decorator (template)" = "guide/decorators/universal-decorator.md" },
+    ] },
   { "Dependency Checks" = "guide/has-dep.md" },
 ]
 

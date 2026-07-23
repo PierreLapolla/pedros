@@ -32,14 +32,6 @@ Repository = "https://github.com/pierrelapolla/pedros"
 Issues = "https://github.com/pierrelapolla/pedros/issues"
 Documentation = "https://pierrelapolla.github.io/pedros/"
 
-[project.optional-dependencies]
-rich = [
-    "rich>=14.3.3",
-]
-all = [
-    "rich>=14.3.3",
-]
-
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
