@@ -61,7 +61,7 @@ def test_setup_logging_invalid_level():
     try:
         setup_logging("NOT_A_LEVEL")
     except ValueError as exc:
-        assert "Invalid logging level" in str(exc)
+        assert "Invalid log level" in str(exc)
     else:
         raise AssertionError("Expected ValueError for invalid logging level")
 

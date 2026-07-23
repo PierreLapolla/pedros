@@ -44,6 +44,7 @@ def normalize_log_level(log_level: int | str | None) -> int | None:
     if level is None:
         allowed = ", ".join((*_LOG_LEVEL_NAME_TO_VALUE.keys(), "NONE"))
         raise ValueError(f"Invalid log level '{log_level}'. Allowed values: {allowed}.")
+
     return level
 
 
@@ -91,10 +92,7 @@ def setup_logging(
     global _configured
 
     target_logger = logging.getLogger(logger_name)
-    try:
-        normalized_level = normalize_log_level(level)
-    except ValueError as exc:
-        raise ValueError(f"Invalid logging level '{level}'.") from exc
+    normalized_level = normalize_log_level(level)
     if normalized_level is None:
         raise ValueError(f"Invalid logging level '{level}'.")
     root_has_handlers = bool(logging.getLogger().handlers)
