@@ -1,5 +1,5 @@
 ---
-icon: lucide/timer
+icon: lucide/at-sign
 ---
 
 # Decorators
