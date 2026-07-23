@@ -30,7 +30,7 @@ def test_trace_logs_call_and_result(caplog):
     with caplog.at_level("DEBUG", logger="pedros"):
         assert func(1, 2) == 3
 
-    assert "Calling func" in caplog.text
+    assert "calling func" in caplog.text
     assert "returned 3" in caplog.text
     assert any(record.name == "pedros" for record in caplog.records)
 
@@ -67,7 +67,7 @@ def test_trace_none_log(caplog):
 
     with caplog.at_level("DEBUG"):
         assert func()
-        assert "Calling func" not in caplog.text
+        assert "calling func" not in caplog.text
 
 
 def test_trace_no_args():

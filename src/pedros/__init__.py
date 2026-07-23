@@ -9,8 +9,10 @@ Public API:
 - timed: Decorator to measure execution time
 - safe: Decorator to encapsulate a function in a try-except block
 - trace: Decorator to log a function's arguments, return value, or raised exception
+- monitor: Decorator combining trace, timed, and safe with their defaults
 """
 
+from pedros.decorators.monitor import monitor
 from pedros.decorators.safe import safe
 from pedros.decorators.timed import timed
 from pedros.decorators.trace import trace
@@ -26,4 +28,5 @@ __all__ = [
     "timed",
     "safe",
     "trace",
+    "monitor",
 ]

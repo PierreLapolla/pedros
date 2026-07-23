@@ -9,7 +9,7 @@ A small package of reusable Python utilities for Python projects.
 - **Dependency Management**: Smart detection of optional dependencies (rich, tqdm)
 - **Logging**: Simplified logging setup with optional Rich support
 - **Progress Bars**: Unified progress bar API with multiple backends
-- **Decorators**: Robust decorators for timing (`@timed`), error handling (`@safe`), and call tracing (`@trace`)
+- **Decorators**: Robust decorators for timing (`@timed`), error handling (`@safe`), and call tracing (`@trace`), or all combined with `@monitor`
 - **Type Safe**: Comprehensive type hints and PEP 561 compliance
 
 ## Installation

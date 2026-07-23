@@ -4,7 +4,7 @@ icon: lucide/at-sign
 
 # Decorators
 
-pedros ships three ready-to-use decorators, all built on
+pedros ships four ready-to-use decorators, all built on
 [`wrapt`](https://pypi.org/project/wrapt/) so they preserve signatures and
 work transparently on sync and async functions, used bare (`@timed`) or
 configured (`@timed(...)`):
@@ -14,6 +14,8 @@ configured (`@timed(...)`):
   callbacks, and optional re-raising
 - [`@trace`](trace.md): logs a function's arguments, return value, or raised
   exception, without ever suppressing the exception
+- [`@monitor`](monitor.md): combines all three above with their defaults,
+  no configuration of its own
 
 If you need a decorator with the same sync/async-safe shape but different
 behavior, start from [the universal decorator](universal-decorator.md), it's

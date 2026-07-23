@@ -47,11 +47,22 @@ logger = get_logger("my_package")
 
 ## pedros's own logging
 
-`@timed`, `@safe`, and `progbar` all log through the `pedros` logger, the
-same one `setup_logging`/`get_logger` target by default. This needs zero
-setup: the first time any of them logs anything, `pedros` auto-configures
-itself with the same defaults `setup_logging()` would use, so you get
-formatted output out of the box.
+`@timed`, `@safe`, `@trace`, `@monitor`, and `progbar` all log through the
+`pedros` logger, the same one `setup_logging`/`get_logger` target by
+default. This needs zero setup: the first time any of them logs anything,
+`pedros` auto-configures itself with the same defaults `setup_logging()`
+would use (level `INFO`), so you get formatted output out of the box.
+
+That default level means `@safe`'s `ERROR`-level output always shows, but
+`@timed` and `@trace` log at `DEBUG` and stay silent until you raise
+`pedros`'s verbosity:
+
+```python
+from pedros import setup_logging
+import logging
+
+setup_logging(level=logging.DEBUG)
+```
 
 This logger is deliberately kept separate from your own application logger:
 configuring your own logger (or root logging) never affects `pedros`'s,

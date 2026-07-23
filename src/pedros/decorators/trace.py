@@ -72,7 +72,7 @@ def trace(
                 if normalized_level is not None:
                     get_logger().log(
                         normalized_level,
-                        f"Calling {wrapped.__name__}(args={args!r}, kwargs={kwargs!r})",
+                        f"calling {wrapped.__name__}(args={args!r}, kwargs={kwargs!r})",
                     )
 
             def _log_result(result: Any) -> None:

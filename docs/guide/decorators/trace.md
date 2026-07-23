@@ -18,9 +18,13 @@ def add(x, y):
 
 
 add(1, 2)
-# Logs (DEBUG): "Calling add(args=(1, 2), kwargs={})"
+# Logs (DEBUG): "calling add(args=(1, 2), kwargs={})"
 # Logs (DEBUG): "add returned 3"
 ```
+
+`@trace` logs at `DEBUG` by default, which stays silent unless you've
+raised `pedros`'s verbosity, see the
+[logging guide](../logging.md#pedross-own-logging).
 
 On an exception, it logs the exception instead of the return value, then
 re-raises:
@@ -32,7 +36,7 @@ def risky():
 
 
 risky()
-# Logs (DEBUG): "Calling risky(args=(), kwargs={})"
+# Logs (DEBUG): "calling risky(args=(), kwargs={})"
 # Logs (DEBUG): "risky raised ValueError: boom"
 # ... then ValueError propagates normally
 ```
@@ -46,10 +50,6 @@ def process_data():
 ```
 
 Set `log_level="NONE"` to disable tracing entirely.
-
-`@trace` always logs through the `pedros` logger, see the
-[logging guide](../logging.md#pedross-own-logging) for how to view or
-silence it.
 
 ## Async functions
 
