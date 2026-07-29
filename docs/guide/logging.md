@@ -50,8 +50,18 @@ logger = get_logger("my_package")
 `@timed`, `@safe`, `@trace`, `@monitor`, and `progbar` all log through the
 `pedros` logger, the same one `setup_logging`/`get_logger` target by
 default. This needs zero setup: the first time any of them logs anything,
-`pedros` auto-configures itself with the same defaults `setup_logging()`
-would use (level `INFO`), so you get formatted output out of the box.
+`pedros` auto-configures itself at level `INFO`, so you get formatted output
+out of the box.
+
+This auto-configuration is deterministic: it always attaches pedros's own
+handler and disables propagation, regardless of whether it happens before or
+after your application sets up its own logging. It does **not** inspect root
+logging state the way an explicit `setup_logging()` call does, so the
+outcome never depends on import/call order. If you want pedros integrated
+with root logging instead (e.g. so your own handler picks up its records),
+call `setup_logging()` yourself before pedros logs anything for the first
+time — an explicit call always takes precedence and re-derives handler/
+propagation state from the current root logging setup.
 
 That default level means `@safe`'s `ERROR`-level output always shows, but
 `@timed` and `@trace` log at `DEBUG` and stay silent until you raise
