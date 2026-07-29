@@ -29,8 +29,9 @@ yourself to get the enhanced logging/progress-bar backend.
 
 ## Documentation
 
-Full usage guide, one page per feature, with examples:
-[pierrelapolla.github.io/pedros](https://pierrelapolla.github.io/pedros/)
+[pierrelapolla.github.io/pedros](https://pierrelapolla.github.io/pedros/) —
+a Guide page per feature with runnable examples, plus a single API
+Reference page listing every public signature.
 
 ## License
 

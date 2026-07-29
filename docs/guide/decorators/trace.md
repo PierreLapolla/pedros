@@ -41,25 +41,15 @@ risky()
 # ... then ValueError propagates normally
 ```
 
-Configure the log level:
+## Options
+
+- `log_level`: level used for the call/return/error trace, or `"NONE"` to
+  disable tracing entirely (default: `"DEBUG"`)
 
 ```python
 @trace(log_level="INFO")
 def process_data():
     return "result"
-```
-
-Set `log_level="NONE"` to disable tracing entirely.
-
-## Async functions
-
-```python
-@trace
-async def fetch_data():
-    ...
-
-
-await fetch_data()
 ```
 
 ## Combining with `@safe`

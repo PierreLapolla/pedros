@@ -65,6 +65,14 @@ def _create_logging_handler() -> logging.Handler:
     return handler
 
 
+def _strip_auto_handlers(target_logger: logging.Logger) -> None:
+    target_logger.handlers = [
+        handler
+        for handler in target_logger.handlers
+        if not getattr(handler, _SETUP_HANDLER_ATTR, False)
+    ]
+
+
 def setup_logging(
     level: int | str = logging.INFO,
     logger_name: str = _LIBRARY_LOGGER_NAME,
@@ -79,6 +87,11 @@ def setup_logging(
     colorful, and trace-friendly logging. If Rich is not installed,
     it silently falls back to Python's standard logging handler.
     See more about Rich (https://pypi.org/project/rich/).
+
+    Calling this explicitly always takes precedence over pedros's own
+    auto-configuration (see :func:`get_logger`), regardless of call order:
+    it re-derives handler/propagation state from the current root logging
+    setup every time it runs.
 
     :param level: Logging level to use as integer or string name. Defaults to ``logging.INFO``.
     :param logger_name: Logger to configure. Defaults to the ``pedros`` package logger.
@@ -96,11 +109,7 @@ def setup_logging(
         raise ValueError(f"Invalid logging level '{level}'.")
     root_has_handlers = bool(logging.getLogger().handlers)
 
-    target_logger.handlers = [
-        handler
-        for handler in target_logger.handlers
-        if not getattr(handler, _SETUP_HANDLER_ATTR, False)
-    ]
+    _strip_auto_handlers(target_logger)
 
     if add_handler is None:
         add_handler = not root_has_handlers and not target_logger.handlers
@@ -115,19 +124,42 @@ def setup_logging(
     _configured = True
 
 
+def _auto_configure() -> None:
+    """
+    Deterministically configure the ``pedros`` logger for zero-setup use.
+
+    Unlike :func:`setup_logging`, this never inspects root logging state:
+    it always attaches pedros's own handler at ``INFO`` and disables
+    propagation. That makes the outcome independent of whether this fires
+    before or after the host application configures its own logging. Call
+    :func:`setup_logging` explicitly to integrate with root logging instead.
+    """
+    global _configured
+
+    target_logger = logging.getLogger(_LIBRARY_LOGGER_NAME)
+    _strip_auto_handlers(target_logger)
+    target_logger.addHandler(_create_logging_handler())
+    target_logger.setLevel(logging.INFO)
+    target_logger.propagate = False
+    _configured = True
+
+
 def get_logger(name: str | None = None) -> logging.Logger:
     """
     Return a logger instance.
 
-    If no name is provided, the ``pedros`` package logger is returned, and it is
-    auto-configured with :func:`setup_logging` defaults on first use if nothing
-    has configured it yet. This is what powers ``pedros``'s own decorators and
-    utilities without requiring any setup.
+    If no name is provided, the ``pedros`` package logger is returned, and it
+    is auto-configured on first use if nothing has configured it yet. This is
+    what powers ``pedros``'s own decorators and utilities without requiring
+    any setup. Auto-configuration is deterministic (own handler, no
+    propagation) regardless of call order relative to the host application's
+    logging setup; call :func:`setup_logging` explicitly to integrate with
+    root logging instead.
 
     :param name: Name of the logger. If ``None``, defaults to the ``pedros`` logger.
     :return: A configured logger instance.
     """
     if name is None and not _configured:
-        setup_logging()
+        _auto_configure()
 
     return logging.getLogger(name or _LIBRARY_LOGGER_NAME)

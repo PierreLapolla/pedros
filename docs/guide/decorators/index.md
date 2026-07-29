@@ -17,6 +17,8 @@ configured (`@timed(...)`):
 - [`@monitor`](monitor.md): combines all three above with their defaults,
   no configuration of its own
 
-If you need a decorator with the same sync/async-safe shape but different
-behavior, start from [the universal decorator](universal-decorator.md), it's
-the annotated skeleton `@timed`, `@safe`, and `@trace` are all built from.
+Writing your own decorator with the same sync/async-safe shape? See
+[the universal decorator template](universal-decorator.md) — it's the
+annotated skeleton `@timed`, `@safe`, and `@trace` are all built from. It's
+not part of the public API, so it's linked here rather than in the main
+nav.

@@ -48,18 +48,3 @@ def cleanup():
 def specific_fail():
     raise KeyError("Missing key!")
 ```
-
-## Async functions
-
-```python
-import asyncio
-
-
-@safe(re_raise=False)
-async def async_fail():
-    await asyncio.sleep(0.1)
-    raise ConnectionError("Lost connection")
-
-
-asyncio.run(async_fail())
-```
