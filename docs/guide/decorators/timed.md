@@ -24,26 +24,17 @@ The duration is formatted with an appropriate unit: nanoseconds,
 microseconds, milliseconds, seconds, or `hh:mm:ss` for anything over a
 minute.
 
+## Options
+
+- `log_level`: level used to report the duration, or `"NONE"` to time
+  silently without logging (default: `"DEBUG"`)
+
 `@timed` logs at `DEBUG` by default, which stays silent unless you've
 raised `pedros`'s verbosity, see the
-[logging guide](../logging.md#pedross-own-logging). Configure a different
-level per call site:
+[logging guide](../logging.md#pedross-own-logging):
 
 ```python
 @timed(log_level="INFO")
 def process_data():
     return "result"
-```
-
-Set `log_level="NONE"` to time silently without logging.
-
-## Async functions
-
-```python
-@timed
-async def fetch_data():
-    ...
-
-
-await fetch_data()
 ```

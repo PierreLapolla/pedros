@@ -10,7 +10,7 @@ logging/progress-bar backends.
 
 ## Docs
 
-- [Get Started](https://pierrelapolla.github.io/pedros/): features overview, installation
+- [Get Started](https://pierrelapolla.github.io/pedros/): installation, quick tour
 - [Logging](https://pierrelapolla.github.io/pedros/guide/logging/): `setup_logging`, `get_logger`, pedros's own zero-setup logger
 - [Progress Bars](https://pierrelapolla.github.io/pedros/guide/progress-bars/): `progbar`, backend selection (rich/tqdm/auto/none)
 - [Decorators overview](https://pierrelapolla.github.io/pedros/guide/decorators/): `@timed`, `@safe`, `@trace`, and `@monitor`
@@ -18,8 +18,8 @@ logging/progress-bar backends.
 - [@safe](https://pierrelapolla.github.io/pedros/guide/decorators/safe/): catch/log/re-raise exceptions, callbacks
 - [@trace](https://pierrelapolla.github.io/pedros/guide/decorators/trace/): log a function's args/return value/raised exception, never suppresses
 - [@monitor](https://pierrelapolla.github.io/pedros/guide/decorators/monitor/): combines timed/safe/trace with their defaults, no config
-- [Universal Decorator (template)](https://pierrelapolla.github.io/pedros/guide/decorators/universal-decorator/): sync/async-safe skeleton for building new decorators
 - [Dependency Checks](https://pierrelapolla.github.io/pedros/guide/has-dep/): `has_dep`, optional-dependency detection
+- [API Reference](https://pierrelapolla.github.io/pedros/reference/): every public signature in one place
 
 ## Optional
 

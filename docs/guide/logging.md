@@ -25,14 +25,25 @@ logger.error("This is an error message.")
 logger.critical("This is a critical message.")
 ```
 
-`level` also accepts a level name instead of the `logging` constant:
-
-```python
-setup_logging(level="DEBUG")
-```
-
 If `rich` is not installed, `setup_logging` silently falls back to a
 timestamped, plain-text formatter, no code changes needed.
+
+## Options
+
+- `level`: numeric level or level name (`"DEBUG"`, `"INFO"`, ...),
+  case-insensitive (default: `logging.INFO`)
+- `logger_name`: logger to configure (default: `"pedros"`)
+- `add_handler`: attach a handler to `logger_name`; by default, only when
+  neither root logging nor the target logger already has one
+- `propagate`: propagate records to ancestor loggers; by default, only
+  enabled when the target logger ends up without its own handler (i.e. root
+  logging is doing the handling)
+
+Override either explicitly if you need different behavior:
+
+```python
+setup_logging(logger_name="my_package", add_handler=True, propagate=False)
+```
 
 ## Configuring another logger
 
@@ -94,19 +105,4 @@ To silence it instead:
 import logging
 
 logging.getLogger("pedros").disabled = True
-```
-
-## Handler and propagation control
-
-`add_handler` and `propagate` are inferred by default:
-
-- a handler is attached only if neither root logging nor the target logger
-  already has one
-- propagation to ancestor loggers is enabled only when the target logger
-  ends up without its own handler (i.e. root logging is doing the handling)
-
-Override either explicitly if you need different behavior:
-
-```python
-setup_logging(logger_name="my_package", add_handler=True, propagate=False)
 ```

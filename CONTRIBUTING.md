@@ -26,3 +26,18 @@ Before opening a pull request, run the hooks against the full tree:
 ```bash
 uv run pre-commit run --all-files
 ```
+
+## Docs structure
+
+The site follows [Diátaxis](https://diataxis.fr/): **Get Started**
+(`docs/index.md`) is the only tutorial page, **Guide** (`docs/guide/`) is
+how-to content — one page per feature, real code first, options as a bullet
+list, no filler sections — and **API Reference** (`docs/reference.md`) is a
+flat, hand-maintained list of every public signature. Keep new pages in
+whichever bucket matches; don't blend tutorial prose into a guide page or
+vice versa.
+
+Writing a new decorator with the same sync/async-safe shape as `@timed`,
+`@safe`, and `@trace`? Start from
+`docs/guide/decorators/universal-decorator.md` — it's the annotated
+skeleton, not part of the public API, so it's excluded from the site nav.

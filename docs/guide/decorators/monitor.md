@@ -57,14 +57,3 @@ def f(): ...
 `@trace` is outermost so it logs the call before anything else runs;
 `@safe` is innermost so it catches errors closest to the source; `@timed`
 sits between them so it measures the actual work.
-
-## Async functions
-
-```python
-@monitor
-async def fetch_data():
-    ...
-
-
-await fetch_data()
-```
