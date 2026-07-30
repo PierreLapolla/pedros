@@ -11,8 +11,27 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
+  version-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Require version bump when publishable sources change
+        if: github.event_name == 'pull_request'
+        run: |
+          git diff --quiet "origin/${{ github.base_ref }}...HEAD" -- src/ pyproject.toml && exit 0
+          base=$(git show "origin/${{ github.base_ref }}:pyproject.toml" | grep -m1 '^version = ')
+          head=$(grep -m1 '^version = ' pyproject.toml)
+          [ "$base" != "$head" ] || { echo "::error::src/ or pyproject.toml changed but version wasn't bumped"; exit 1; }
+
   test:
+    needs: [ version-check ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -47,6 +66,7 @@ jobs:
         run: uv run pytest
 
   build:
+    needs: [ version-check ]
     runs-on: ubuntu-latest
 
     steps:
@@ -56,7 +76,7 @@ jobs:
         uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-          python-version: "3.13"
+          python-version: "3.14"
 
       - name: Build distributions
         run: uv build
@@ -68,7 +88,7 @@ jobs:
           path: dist/
 
   publish:
-    needs: [ test, build ]
+    needs: [ version-check, test, build ]
     runs-on: ubuntu-latest
 
     if: github.event_name == 'push'
@@ -92,4 +112,4 @@ jobs:
         uses: astral-sh/setup-uv@v6
 
       - name: Publish to PyPI
-        run: uv publish
+        run: uv publish --check-url https://pypi.org/simple
