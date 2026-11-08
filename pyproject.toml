@@ -1,6 +1,6 @@
 [project]
 name = "pedros"
-version = "0.16.1"
+version = "0.16.2"
 description = "Small utility package for my projects."
 readme = "README.md"
 license = {file = "LICENSE"}
@@ -48,7 +48,8 @@ dev = [
     "tqdm>=4.67.3",
 ]
 docs = [
-    "zensical>=0.0.51",
+    "mkdocstrings-python>=2.0.0",
+    "zensical>=0.1.0",
 ]
 
 [tool.pytest.ini_options]
@@ -56,3 +57,7 @@ minversion = "8.0"
 addopts = "-ra -q --cov=. --cov-report=html"
 testpaths = ["tests"]
 pythonpath = ["src"]
+
+[tool.uv.dependency-groups]
+# zensical>=0.1.0 dropped Python 3.10; the library itself still supports it.
+docs = { requires-python = ">=3.11" }
